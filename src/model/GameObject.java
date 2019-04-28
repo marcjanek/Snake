@@ -7,10 +7,7 @@ class GameObject
 {
     LinkedList<Point> linkedList;
 
-    GameObject()
-    {
-        linkedList = new LinkedList<>();
-    }
+    Color borderColor;
 
     int getSize()
     {
@@ -35,5 +32,14 @@ class GameObject
     void clear()
     {
         linkedList.clear();
+    }
+
+    Color backgroundColor;
+
+    GameObject(Color borderColor, Color backgroundColor)
+    {
+        this.borderColor = borderColor;
+        this.backgroundColor = backgroundColor;
+        linkedList = new LinkedList<>();
     }
 }

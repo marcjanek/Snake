@@ -7,17 +7,20 @@ import java.awt.*;
 
 public class Model
 {
-    private final int WIDTH = 40;
-    private final int HEIGHT = 40;
+    public final int WIDTH = 40;
+    public final int HEIGHT = 40;
+    public final int PROPRTION = 24;
 
     private Snake snake;
     private Apples apples;
     private States actualState;
+    private GamesHistory gamesHistory;
 
     public Model()
     {
         snake = new Snake();
         apples = new Apples(snake, WIDTH, HEIGHT);
+        gamesHistory = new GamesHistory();
         actualState = States.PLAYING;
     }
 
@@ -62,7 +65,7 @@ public class Model
     private boolean Collision()
     {
         boolean collision = false;
-        for (int i = 1; i < snake.getSize(); ++i)
+        for (int i = 2; i < snake.getSize(); ++i)
         {
             if (snake.getHead().equals(snake.get(i)))
             {
@@ -79,7 +82,7 @@ public class Model
         return collision;
     }
 
-    int getScore()
+    public int getScore()
     {
         return snake.score();
     }
@@ -104,6 +107,46 @@ public class Model
         snake.reset();
         apples.reset();
         actualState = States.SCORES;
+    }
+
+    public Point getSnake(int index)
+    {
+        return snake.get(index);
+    }
+
+    public int getSnakeSize()
+    {
+        return snake.getSize();
+    }
+
+    public Point getApples(int index)
+    {
+        return apples.get(index);
+    }
+
+    public int getApplesSize()
+    {
+        return apples.getSize();
+    }
+
+    public Color getSnakeBorderColor()
+    {
+        return snake.borderColor;
+    }
+
+    public Color getSnakeBackgroundColor()
+    {
+        return snake.backgroundColor;
+    }
+
+    public Color getAppleBorderColor()
+    {
+        return apples.borderColor;
+    }
+
+    public Color getAppleBackgroundColor()
+    {
+        return apples.backgroundColor;
     }
 }
 

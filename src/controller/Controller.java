@@ -13,62 +13,41 @@ public class Controller implements Runnable
 {
     private final Model model;
     private final View view;
-    private Direction direction;
     private Thread thread;
+    private final KeysControl keysControl;
+    private Timer timer;
 
-    public Controller(Model model, View view)
+    public Controller(Model model, View view, KeysControl keysControl)
     {
         this.model = model;
         this.view = view;
-        direction = Direction.RIGHT;
+        this.keysControl = keysControl;
+        keysControl.direction = Direction.RIGHT;
         thread = new Thread(this, "Snake");
         thread.start();
     }
-
     public void run()
     {
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask()
         {
-            @Override
             public void run()
             {
                 if (model.getGameState() == States.PLAYING)
                 {
-                    model.moveSnake(direction);
-                    //TODO:VIEW PRINT
+                    model.moveSnake(keysControl.direction);
+                    view.arena.repaint();
+                    view.score.updateScore();
                 }
             }
-        }, 0, 1000);
+        }, 0, 500);
     }
 
     private void restartGame()
     {
         model.resetGame();
-        direction = Direction.RIGHT;
+        keysControl.direction = Direction.RIGHT;
     }
 
-    private void changeDirection(Direction newDirection)
-    {
-        if (model.getGameState() == States.PLAYING)
-        {
-            if (direction == newDirection) return;
-            switch (newDirection)
-            {
-                case UP:
-                    if (direction != Direction.DOWN) direction = newDirection;
-                    break;
-                case DOWN:
-                    if (direction != Direction.UP) direction = newDirection;
-                    break;
-                case LEFT:
-                    if (direction != Direction.RIGHT) direction = newDirection;
-                    break;
-                case RIGHT:
-                    if (direction != Direction.LEFT) direction = newDirection;
-                    break;
-            }
-        }
-    }
-    //TODO control up,down,left,right
+
 }

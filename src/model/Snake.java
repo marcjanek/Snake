@@ -9,7 +9,7 @@ class Snake extends GameObject
 
     Snake()
     {
-        super();
+        super(new Color(100, 100, 100), new Color(150, 150, 150));
         add(new Point(START_X, START_Y));
     }
 

@@ -12,7 +12,7 @@ class Apples extends GameObject
 
     Apples(Snake snake, int WIDTH, int HEIGHT)
     {
-        super();
+        super(new Color(200, 0, 6), new Color(250, 64, 0));
         this.snake = snake;
         this.WIDTH = WIDTH;
         this.HEIGHT = HEIGHT;
