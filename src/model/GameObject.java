@@ -6,6 +6,7 @@ import java.util.LinkedList;
 class GameObject
 {
     LinkedList<Point> linkedList;
+    LinkedList<Point> freePoints;
 
     Color borderColor;
 
@@ -24,9 +25,12 @@ class GameObject
         return linkedList.contains(point);
     }
 
-    void add(Point point)
+    GameObject(Color borderColor, Color backgroundColor, LinkedList freePoints)
     {
-        linkedList.add(point);
+        this.freePoints = freePoints;
+        this.borderColor = borderColor;
+        this.backgroundColor = backgroundColor;
+        linkedList = new LinkedList<>();
     }
 
     void clear()
@@ -36,10 +40,9 @@ class GameObject
 
     Color backgroundColor;
 
-    GameObject(Color borderColor, Color backgroundColor)
+    void add(Point point)
     {
-        this.borderColor = borderColor;
-        this.backgroundColor = backgroundColor;
-        linkedList = new LinkedList<>();
+        linkedList.add(point);
+        freePoints.remove(point);
     }
 }

@@ -4,6 +4,7 @@ import enums.Direction;
 import enums.States;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 public class Model
 {
@@ -15,71 +16,70 @@ public class Model
     private Apples apples;
     private States actualState;
     private GamesHistory gamesHistory;
-
+    private final LinkedList<Point> freePoints;
     public Model()
     {
-        snake = new Snake();
-        apples = new Apples(snake, WIDTH, HEIGHT);
+        freePoints = new LinkedList<>();
+        for (int i = 0; i < WIDTH; ++i)
+        {
+            for (int j = 0; j < HEIGHT; ++j)
+            {
+                freePoints.add(new Point(i, j));
+            }
+        }
+        snake = new Snake(WIDTH, HEIGHT, freePoints);
+        apples = new Apples(snake, WIDTH, HEIGHT, freePoints);
         gamesHistory = new GamesHistory();
         actualState = States.PLAYING;
     }
 
-    private void moveHead(Direction direction)
+    private Point moveHead(Direction direction)
     {
+        int x = snake.getHead().x;
+        int y = snake.getHead().y;
         switch (direction)
         {
             case DOWN:
-                snake.addFirst(new Point(snake.getHead().x, --snake.getHead().y));
-                break;
+                return new Point(x, ++y);
             case LEFT:
-                snake.addFirst(new Point(--snake.getHead().x, snake.getHead().y));
-                break;
+                return new Point(--x, y);
             case RIGHT:
-                snake.addFirst(new Point(++snake.getHead().x, snake.getHead().y));
-                break;
+                return new Point(++x, y);
             case UP:
-                snake.addFirst(new Point(snake.getHead().x, ++snake.getHead().y));
-                break;
-
+                return new Point(x, --y);
         }
+        return new Point(0, 0);
     }
 
     public void moveSnake(Direction direction)
     {
-        moveHead(direction);
-        if (!Collision() && !HeadOnApple())
+        Point newHead = moveHead(direction);
+        if (!headOnApple(newHead))
+        {
+            if (collision(newHead))
+            {
+                resetGame();
+                return;
+            }
             snake.pollTail();
+        }
+        snake.addFirst(newHead);
     }
 
-    private boolean HeadOnApple()
+    private boolean headOnApple(Point newHead)
     {
-        if (apples.contains(snake.getHead()))
+        if (apples.contains(newHead))
         {
-            apples.poll(snake.getHead());
-            apples.addApple();
+            apples.poll(newHead);
+            apples.addAppleNotIn(newHead);
             return true;
         }
         return false;
     }
 
-    private boolean Collision()
+    private boolean collision(Point newHead)
     {
-        boolean collision = false;
-        for (int i = 2; i < snake.getSize(); ++i)
-        {
-            if (snake.getHead().equals(snake.get(i)))
-            {
-                collision = true;
-                break;
-            }
-        }
-        if (!collision && (snake.getHead().x < 0 || snake.getHead().x >= WIDTH || snake.getHead().y < 0 || snake.getHead().y > HEIGHT))
-            collision = true;
-        if (collision)
-        {
-            resetGame();
-        }
-        return collision;
+        return snake.contains(newHead) || (snake.getHead().x < 0 || snake.getHead().x >= WIDTH || snake.getHead().y < 0 || snake.getHead().y >= HEIGHT);
     }
 
     public int getScore()

@@ -4,6 +4,9 @@ import model.Model;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.Timer;
 
 public class Arena extends JPanel
 {
@@ -16,56 +19,56 @@ public class Arena extends JPanel
         setBackground(new Color(6, 255, 0));
     }
 
-    public void paint(Graphics graphics2D)
+    public void paint(Graphics graphics)
     {
 
-        super.paint(graphics2D);
+        super.paint(graphics);
         switch (model.getGameState())
         {
 
             case PLAYING:
-                drawSnake(graphics2D);
+                drawSnake(graphics);
                 break;
             case SCORES:
-                drawScores(graphics2D);
+                drawScores(graphics);
                 break;
             case WAITING:
-                drawWaiting(graphics2D);
+                drawWaiting(graphics);
                 break;
         }
     }
 
-    private void drawSnake(Graphics graphics2D)
+    private void drawSnake(Graphics graphics)
     {
         for (int i = 0; i < model.getSnakeSize(); ++i)
         {
-            drawSnakeHelper(model.getSnake(i), graphics2D, model.getSnakeBorderColor(), model.getSnakeBackgroundColor());
+            drawSnakeHelper(model.getSnake(i), graphics, model.getSnakeBorderColor(), model.getSnakeBackgroundColor());
         }
         for (int i = 0; i < model.getApplesSize(); ++i)
         {
-            drawSnakeHelper(model.getApples(i), graphics2D, model.getAppleBorderColor(), model.getSnakeBackgroundColor());
+            drawSnakeHelper(model.getApples(i), graphics, model.getAppleBorderColor(), model.getSnakeBackgroundColor());
         }
     }
 
-    private void drawSnakeHelper(Point point, Graphics graphics2D, Color border, Color fill)
+    private void drawSnakeHelper(Point point, Graphics graphics, Color border, Color fill)
     {
-        graphics2D.setColor(border);
-        graphics2D.drawRect(point.x * model.PROPRTION, point.y * model.PROPRTION, model.PROPRTION, model.PROPRTION);
-        graphics2D.setColor(fill);
-        graphics2D.fillRect(point.x * model.PROPRTION, point.y * model.PROPRTION, model.PROPRTION, model.PROPRTION);
+        //graphics.setColor(border);
+        graphics.drawRect(point.x * model.PROPRTION, point.y * model.PROPRTION, model.PROPRTION, model.PROPRTION);
+        graphics.setColor(fill);
+        graphics.fillRect(point.x * model.PROPRTION, point.y * model.PROPRTION, model.PROPRTION, model.PROPRTION);
     }
 
-    private void drawScores(Graphics graphics2D)
+    private void drawScores(Graphics graphics)
     {
         //TODO
     }
 
-    private void drawWaiting(Graphics graphics2D)
+    private void drawWaiting(Graphics graphics)
     {
         String string = "Press arrow to start game";
-        graphics2D.setColor(new Color(255, 255, 255));
-        int x = (model.WIDTH - graphics2D.getFontMetrics().stringWidth(string)) / 2;
-        int y = (model.HEIGHT - graphics2D.getFontMetrics().stringWidth(string)) / 2;
-        graphics2D.drawString("Press arrow to start game", x, y);
+        graphics.setColor(new Color(255, 255, 255));
+        int x = (model.WIDTH - graphics.getFontMetrics().stringWidth(string)) / 2;
+        int y = (model.HEIGHT - graphics.getFontMetrics().stringWidth(string)) / 2;
+        graphics.drawString("Press arrow to start game", x, y);
     }
 }

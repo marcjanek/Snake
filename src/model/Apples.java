@@ -1,32 +1,38 @@
 package model;
 
 import java.awt.*;
+import java.util.LinkedList;
 import java.util.Random;
 
 class Apples extends GameObject
 {
-    private final int MAX_APPLES = 1;
+    private final int MAX_APPLES = 10;
     private final int WIDTH, HEIGHT;
     private final Snake snake;
     private Random random = new Random();
 
-    Apples(Snake snake, int WIDTH, int HEIGHT)
+    Apples(Snake snake, int WIDTH, int HEIGHT, LinkedList freePoints)
     {
-        super(new Color(200, 0, 6), new Color(250, 64, 0));
+        super(new Color(200, 0, 6), new Color(250, 64, 0), freePoints);
         this.snake = snake;
         this.WIDTH = WIDTH;
         this.HEIGHT = HEIGHT;
         addApple(MAX_APPLES);
     }
 
-    void addApple()
+    void addAppleNotIn(Point newHead)
     {
-        Point newApple = new Point();
+        Point newApple;
         do
         {
-            newApple.setLocation(random.nextInt(WIDTH), random.nextInt(HEIGHT));
-        } while (snake.contains(newApple) || contains(newApple));
+            newApple = freePoints.get(random.nextInt(freePoints.size()));
+        } while (newApple.equals(newHead));
         add(newApple);
+        freePoints.remove(newApple);
+    }
+    void addApple()
+    {
+        add(freePoints.remove(random.nextInt(freePoints.size())));
     }
 
     void poll(Point point)

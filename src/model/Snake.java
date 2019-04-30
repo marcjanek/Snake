@@ -1,15 +1,18 @@
 package model;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 class Snake extends GameObject
 {
-    private static final int START_X = 10;
-    private static final int START_Y = 10;
+    private final int START_X;
+    private final int START_Y;
 
-    Snake()
+    Snake(int WIDTH, int HEIGHT, LinkedList freePoints)
     {
-        super(new Color(100, 100, 100), new Color(150, 150, 150));
+        super(new Color(100, 100, 100), new Color(150, 150, 150), freePoints);
+        START_X = WIDTH / 4;
+        START_Y = HEIGHT / 2;
         add(new Point(START_X, START_Y));
     }
 
@@ -24,19 +27,9 @@ class Snake extends GameObject
         return linkedList.getFirst();
     }
 
-    Point getTail()
-    {
-        return linkedList.getLast();
-    }
-
-    void pollHead()
-    {
-        linkedList.pollFirst();
-    }
-
     void pollTail()
     {
-        linkedList.pollLast();
+        freePoints.add(linkedList.pollLast());
     }
 
     void addFirst(Point point)
@@ -44,16 +37,6 @@ class Snake extends GameObject
         linkedList.addFirst(point);
     }
 
-    void addLast(Point point)
-    {
-        linkedList.addLast(point);
-    }
-
-    void moveSnake(Point newHeadCoordinates)
-    {
-        pollTail();
-        addFirst(newHeadCoordinates);
-    }
 
     int score()
     {
