@@ -1,36 +1,58 @@
 package model;
 
 import enums.Direction;
+import enums.Level;
 import enums.States;
 
 import java.awt.*;
+import java.util.Date;
 import java.util.LinkedList;
 
 public class Model
 {
     public final int WIDTH = 40;
     public final int HEIGHT = 40;
-    public final int PROPRTION = 24;
-
+    public final int PROPORTION = 23;
+    private final LinkedList<Point> freePoints;
+    public GamesHistory gamesHistory;
+    public long startTimeOfGame;
+    public int speed = 500;
+    public Direction lastDirection = Direction.RIGHT;
     private Snake snake;
     private Apples apples;
     private States actualState;
-    private GamesHistory gamesHistory;
-    private final LinkedList<Point> freePoints;
+
+
     public Model()
     {
         freePoints = new LinkedList<>();
-        for (int i = 0; i < WIDTH; ++i)
-        {
-            for (int j = 0; j < HEIGHT; ++j)
-            {
-                freePoints.add(new Point(i, j));
-            }
-        }
+        resetFreePoints();
         snake = new Snake(WIDTH, HEIGHT, freePoints);
-        apples = new Apples(snake, WIDTH, HEIGHT, freePoints);
+        apples = new Apples(freePoints);
         gamesHistory = new GamesHistory();
-        actualState = States.PLAYING;
+        actualState = States.READY;
+    }
+
+    private void resetFreePoints()
+    {
+        for (int i = 0; i < WIDTH; ++i)
+            for (int j = 0; j < HEIGHT; ++j)
+                freePoints.add(new Point(i, j));
+    }
+
+    public int highScore()
+    {
+        return gamesHistory.highScore.score;
+    }
+
+    public GamesHistory.GameStatistics getHistoryData(int index)
+    {
+        return gamesHistory.get(index);
+    }
+
+    public int sizeHistoryData()
+    {
+        return gamesHistory.size();
     }
 
     private Point moveHead(Direction direction)
@@ -58,12 +80,18 @@ public class Model
         {
             if (collision(newHead))
             {
-                resetGame();
+                gameOver();
                 return;
             }
             snake.pollTail();
         }
         snake.addFirst(newHead);
+    }
+
+    private void gameOver()
+    {
+        setGameState(States.GAME_OVER);
+        gamesHistory.add(getScore(), new Date(System.currentTimeMillis()), System.currentTimeMillis() - startTimeOfGame);
     }
 
     private boolean headOnApple(Point newHead)
@@ -92,21 +120,9 @@ public class Model
         return actualState;
     }
 
-    void setGameState(States newState)
+    public void setGameState(States newState)
     {
         this.actualState = newState;
-    }
-
-    void removeFood(Point appleToRemove)
-    {
-        apples.poll(appleToRemove);
-    }
-
-    public void resetGame()
-    {
-        snake.reset();
-        apples.reset();
-        actualState = States.SCORES;
     }
 
     public Point getSnake(int index)
@@ -129,24 +145,38 @@ public class Model
         return apples.getSize();
     }
 
-    public Color getSnakeBorderColor()
+    private void setLevelSettings(Level level)
     {
-        return snake.borderColor;
+        switch (level)
+        {
+            case EASY:
+                speed = 500;
+                apples.MAX_APPLES = 50;
+                break;
+            case MEDIUM:
+                speed = 200;
+                apples.MAX_APPLES = 20;
+                break;
+            case HARD:
+                speed = 100;
+                apples.MAX_APPLES = 10;
+                break;
+            case EXPERT:
+                speed = 50;
+                apples.MAX_APPLES = 1;
+                break;
+        }
     }
 
-    public Color getSnakeBackgroundColor()
+    public void restart(Level level)
     {
-        return snake.backgroundColor;
-    }
+        setLevelSettings(level);
+        resetFreePoints();
+        snake.reset();
+        apples.reset();
+        lastDirection = Direction.RIGHT;
+        actualState = States.READY;
 
-    public Color getAppleBorderColor()
-    {
-        return apples.borderColor;
-    }
-
-    public Color getAppleBackgroundColor()
-    {
-        return apples.backgroundColor;
     }
 }
 

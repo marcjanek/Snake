@@ -14,75 +14,99 @@ import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
-public class Controller
+public class Controller implements Runnable
 {
     private final Model model;
     private final View view;
-    private static final int TIMER_DELAY = 80;
-    public javax.swing.Timer timer;
-    private Direction lastDirection;
 
 
     public Controller(Model model, View view)
     {
         this.model = model;
         this.view = view;
-        lastDirection = Direction.RIGHT;
-        timer = new javax.swing.Timer(TIMER_DELAY, new TimerListener());
-        timer.start();
+        new Thread(this::run).start();
+        ready();
     }
 
-    private void restartGame()
+    private void ready()
     {
-        model.resetGame();
-        lastDirection = Direction.RIGHT;
+        while (model.getGameState() != States.PLAYING)
+        {
+            view.paint();
+            try
+            {
+                Thread.sleep(10);
+            } catch (InterruptedException e)
+            {
+                System.exit(1);
+            }
+        }
+        play();
+    }
+
+    private void play()
+    {
+        while (model.getGameState() == States.PLAYING)
+        {
+            changeDirection(view.direction);
+            model.moveSnake(model.lastDirection);
+            view.paint();
+            try
+            {
+                Thread.sleep(model.speed);
+            } catch (InterruptedException e)
+            {
+                System.exit(1);
+            }
+        }
+        gameOver();
+    }
+
+    private void gameOver()
+    {
+        while (model.getGameState() != States.READY)
+        {
+            try
+            {
+                Thread.sleep(10);
+            } catch (InterruptedException e)
+            {
+                System.exit(1);
+            }
+        }
+        ready();
+    }
+
+    @Override
+    public void run()
+    {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+        {
+            public void run()
+            {
+                view.paintScoreBar();
+            }
+        }, 0, 1000);
     }
 
     private void changeDirection(Direction newDirection)
     {
-        if (lastDirection == newDirection)
-            return;
-        switch (newDirection)
-        {
-            case UP:
-                if (lastDirection != Direction.DOWN) lastDirection = newDirection;
-                break;
-            case DOWN:
-                if (lastDirection != Direction.UP) lastDirection = newDirection;
-                break;
-            case LEFT:
-                if (lastDirection != Direction.RIGHT) lastDirection = newDirection;
-                break;
-            case RIGHT:
-                if (lastDirection != Direction.LEFT) lastDirection = newDirection;
-                break;
-        }
-    }
-
-    private class TimerListener implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if (model.getGameState() == States.PLAYING)
+        if (model.lastDirection != newDirection)
+            switch (newDirection)
             {
-                changeDirection(view.direction);
-                model.moveSnake(lastDirection);
-                view.arena.repaint();
-                view.score.updateScore();
-                view.jFrame.repaint();
-                try
-                {
-                    Robot robot = new Robot();
-                    robot.keyPress(KeyEvent.VK_0);
-                } catch (AWTException e1)
-                {
-                }
-
-
+                case UP:
+                    if (model.lastDirection != Direction.DOWN) model.lastDirection = newDirection;
+                    break;
+                case DOWN:
+                    if (model.lastDirection != Direction.UP) model.lastDirection = newDirection;
+                    break;
+                case LEFT:
+                    if (model.lastDirection != Direction.RIGHT) model.lastDirection = newDirection;
+                    break;
+                case RIGHT:
+                    if (model.lastDirection != Direction.LEFT) model.lastDirection = newDirection;
+                    break;
             }
-        }
-
     }
-
 }

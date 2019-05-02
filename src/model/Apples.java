@@ -6,17 +6,12 @@ import java.util.Random;
 
 class Apples extends GameObject
 {
-    private final int MAX_APPLES = 10;
-    private final int WIDTH, HEIGHT;
-    private final Snake snake;
+    int MAX_APPLES = 50;
     private Random random = new Random();
 
-    Apples(Snake snake, int WIDTH, int HEIGHT, LinkedList freePoints)
+    Apples(LinkedList freePoints)
     {
-        super(new Color(200, 0, 6), new Color(250, 64, 0), freePoints);
-        this.snake = snake;
-        this.WIDTH = WIDTH;
-        this.HEIGHT = HEIGHT;
+        super(freePoints);
         addApple(MAX_APPLES);
     }
 
@@ -30,6 +25,7 @@ class Apples extends GameObject
         add(newApple);
         freePoints.remove(newApple);
     }
+
     void addApple()
     {
         add(freePoints.remove(random.nextInt(freePoints.size())));
@@ -46,9 +42,9 @@ class Apples extends GameObject
         addApple(MAX_APPLES);
     }
 
-    private void addApple(int numerOfNewApples)
+    private void addApple(int numberOfNewApples)
     {
-        for (int i = 0; i < numerOfNewApples; ++i)
+        for (int i = 0; i < numberOfNewApples; ++i)
             addApple();
     }
 }

@@ -8,7 +8,13 @@ class GameObject
     LinkedList<Point> linkedList;
     LinkedList<Point> freePoints;
 
-    Color borderColor;
+    Image image;
+
+    GameObject(LinkedList freePoints)
+    {
+        this.freePoints = freePoints;
+        linkedList = new LinkedList<>();
+    }
 
     int getSize()
     {
@@ -25,24 +31,19 @@ class GameObject
         return linkedList.contains(point);
     }
 
-    GameObject(Color borderColor, Color backgroundColor, LinkedList freePoints)
-    {
-        this.freePoints = freePoints;
-        this.borderColor = borderColor;
-        this.backgroundColor = backgroundColor;
-        linkedList = new LinkedList<>();
-    }
-
     void clear()
     {
         linkedList.clear();
     }
 
-    Color backgroundColor;
-
     void add(Point point)
     {
         linkedList.add(point);
         freePoints.remove(point);
+    }
+
+    void setImage(Image image)
+    {
+        this.image = image;
     }
 }

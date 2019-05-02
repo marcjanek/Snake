@@ -2,5 +2,5 @@ package enums;
 
 public enum States
 {
-    PLAYING, SCORES, WAITING
+    PLAYING, READY, GAME_OVER
 }

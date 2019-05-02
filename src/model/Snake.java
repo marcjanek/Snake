@@ -10,7 +10,7 @@ class Snake extends GameObject
 
     Snake(int WIDTH, int HEIGHT, LinkedList freePoints)
     {
-        super(new Color(100, 100, 100), new Color(150, 150, 150), freePoints);
+        super(freePoints);
         START_X = WIDTH / 4;
         START_Y = HEIGHT / 2;
         add(new Point(START_X, START_Y));
