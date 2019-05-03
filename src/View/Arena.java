@@ -37,7 +37,7 @@ public class Arena extends JPanel
                 break;
             }
             case GAME_OVER:
-                drawHighScores(graphics);
+                drawGameOver(graphics);
                 break;
             case READY:
                 drawPressEnter(graphics);
@@ -58,14 +58,14 @@ public class Arena extends JPanel
         }
         for (int i = 0; i < model.getApplesSize(); ++i)
         {
-            point = model.getApples(i);
+            point = model.getApple(i);
             graphics.drawImage(apple, point.x * model.PROPORTION, point.y * model.PROPORTION, model.PROPORTION, model.PROPORTION, this);
         }
     }
 
     private void drawPressEnter(Graphics graphics)
     {
-        String string = "Press arrow to start game";
+        String string = "Press ENTER to start game";
         graphics.setColor(text);
         graphics.setFont(new Font("TimesRoman", Font.PLAIN, 40));
         int x = (model.WIDTH * model.PROPORTION - graphics.getFontMetrics().stringWidth(string)) / 2;
@@ -73,24 +73,14 @@ public class Arena extends JPanel
         graphics.drawString(string, x, y);
     }
 
-    private void drawHighScores(Graphics graphics)
+    private void drawGameOver(Graphics graphics)
     {
-        String string = "top scores:";
+        String gameOver = "GAME OVER";
+        String score = "score:";
         graphics.setColor(text);
         graphics.setFont(new Font("TimesRoman", Font.PLAIN, 20));
-        int x = (model.WIDTH * model.PROPORTION - graphics.getFontMetrics().stringWidth(string)) / 2;
+        int x = (model.WIDTH * model.PROPORTION - graphics.getFontMetrics().stringWidth(gameOver)) / 2;
         int y = (model.HEIGHT * model.PROPORTION) / 5;
-        graphics.drawString(string, x, y);
-
-
-        graphics.setColor(text);
-        graphics.setFont(new Font("TimesRoman", Font.PLAIN, 10));
-
-        for (int i = 0; i < model.sizeHistoryData(); ++i)
-        {
-            //String string=(model.getHistoryData(i));
-            x = (model.WIDTH * model.PROPORTION - graphics.getFontMetrics().stringWidth(string)) / 2;
-        }
-
+        graphics.drawString(gameOver, x, y);
     }
 }

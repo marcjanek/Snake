@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.SimpleFormatter;
 
 public class Score extends JPanel
 {
@@ -33,6 +32,6 @@ public class Score extends JPanel
 
     void updateScore()
     {
-        jLabel.setText("Score: " + model.getScore() + " Best Score:" + model.getScore() + " Actual date: " + formatter.format(new Date(System.currentTimeMillis())));
+        jLabel.setText("Score: " + model.getScore() + " Best Score:" + Math.max(model.bestScore, model.getScore()) + " Actual date: " + formatter.format(new Date(System.currentTimeMillis())));
     }
 }

@@ -1,45 +1,64 @@
 package model;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashSet;
 
-class Snake extends GameObject
+class Snake
 {
     private final int START_X;
     private final int START_Y;
+    ArrayList<Point> snakeBody;
+    HashSet<Point> freePoints;
 
-    Snake(int WIDTH, int HEIGHT, LinkedList freePoints)
+    Snake(int WIDTH, int HEIGHT, HashSet freePoints)
     {
-        super(freePoints);
+        snakeBody = new ArrayList<>();
+        this.freePoints = freePoints;
+
         START_X = WIDTH / 4;
         START_Y = HEIGHT / 2;
         add(new Point(START_X, START_Y));
     }
 
+    Point get(int index)
+    {
+        return snakeBody.get(index);
+    }
+
+    Point head()
+    {
+        return snakeBody.get(0);
+    }
     void reset()
     {
-        clear();
-        add(new Point(START_X, START_Y));
+        snakeBody.clear();
+        snakeBody.add(0, new Point(START_X, START_Y));
+        freePoints.remove(new Point(START_X, START_Y));
     }
 
-    Point getHead()
+    void removeTail()
     {
-        return linkedList.getFirst();
+        freePoints.add(snakeBody.remove(snakeBody.size() - 1));
     }
 
-    void pollTail()
+    void add(Point point)
     {
-        freePoints.add(linkedList.pollLast());
+        freePoints.remove(point);
+        snakeBody.add(0, point);
     }
-
-    void addFirst(Point point)
-    {
-        linkedList.addFirst(point);
-    }
-
-
     int score()
     {
-        return linkedList.size() - 1;
+        return snakeBody.size() - 1;
+    }
+
+    int size()
+    {
+        return snakeBody.size();
+    }
+
+    boolean contains(Point point)
+    {
+        return snakeBody.contains(point);
     }
 }

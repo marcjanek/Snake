@@ -6,6 +6,7 @@ import enums.States;
 
 import java.awt.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class Model
@@ -13,8 +14,8 @@ public class Model
     public final int WIDTH = 40;
     public final int HEIGHT = 40;
     public final int PROPORTION = 23;
-    private final LinkedList<Point> freePoints;
-    public GamesHistory gamesHistory;
+    private final HashSet<Point> freePoints;
+    public int bestScore = 0;
     public long startTimeOfGame;
     public int speed = 500;
     public Direction lastDirection = Direction.RIGHT;
@@ -25,40 +26,24 @@ public class Model
 
     public Model()
     {
-        freePoints = new LinkedList<>();
-        resetFreePoints();
+        freePoints = new HashSet<>();
+        initFreePoints();
         snake = new Snake(WIDTH, HEIGHT, freePoints);
         apples = new Apples(freePoints);
-        gamesHistory = new GamesHistory();
         actualState = States.READY;
     }
 
-    private void resetFreePoints()
+    private void initFreePoints()
     {
         for (int i = 0; i < WIDTH; ++i)
             for (int j = 0; j < HEIGHT; ++j)
                 freePoints.add(new Point(i, j));
     }
 
-    public int highScore()
-    {
-        return gamesHistory.highScore.score;
-    }
-
-    public GamesHistory.GameStatistics getHistoryData(int index)
-    {
-        return gamesHistory.get(index);
-    }
-
-    public int sizeHistoryData()
-    {
-        return gamesHistory.size();
-    }
-
     private Point moveHead(Direction direction)
     {
-        int x = snake.getHead().x;
-        int y = snake.getHead().y;
+        int x = snake.head().x;
+        int y = snake.head().y;
         switch (direction)
         {
             case DOWN:
@@ -69,45 +54,41 @@ public class Model
                 return new Point(++x, y);
             case UP:
                 return new Point(x, --y);
+            default:
+                return new Point(0, 0);
+
         }
-        return new Point(0, 0);
     }
 
     public void moveSnake(Direction direction)
     {
         Point newHead = moveHead(direction);
-        if (!headOnApple(newHead))
+        if (apples.contains(newHead))
         {
-            if (collision(newHead))
-            {
-                gameOver();
-                return;
-            }
-            snake.pollTail();
+            apples.remove(newHead);
+            snake.add(newHead);
+            apples.add(newHead);
+        } else if (collision(newHead))
+        {
+            gameOver();
+            System.out.println("gameover");
+        } else
+        {
+            snake.removeTail();
+            snake.add(newHead);
         }
-        snake.addFirst(newHead);
     }
 
     private void gameOver()
     {
         setGameState(States.GAME_OVER);
-        gamesHistory.add(getScore(), new Date(System.currentTimeMillis()), System.currentTimeMillis() - startTimeOfGame);
-    }
-
-    private boolean headOnApple(Point newHead)
-    {
-        if (apples.contains(newHead))
-        {
-            apples.poll(newHead);
-            apples.addAppleNotIn(newHead);
-            return true;
-        }
-        return false;
+        bestScore = Math.max(getScore(), bestScore);
     }
 
     private boolean collision(Point newHead)
     {
-        return snake.contains(newHead) || (snake.getHead().x < 0 || snake.getHead().x >= WIDTH || snake.getHead().y < 0 || snake.getHead().y >= HEIGHT);
+        System.out.println(newHead);
+        return snake.contains(newHead) || (snake.head().x < 0 || snake.head().x >= WIDTH || snake.head().y < 0 || snake.head().y >= HEIGHT);
     }
 
     public int getScore()
@@ -132,17 +113,17 @@ public class Model
 
     public int getSnakeSize()
     {
-        return snake.getSize();
+        return snake.size();
     }
 
-    public Point getApples(int index)
+    public Point getApple(int index)
     {
         return apples.get(index);
     }
 
     public int getApplesSize()
     {
-        return apples.getSize();
+        return apples.MAX_APPLES;
     }
 
     private void setLevelSettings(Level level)
@@ -171,12 +152,11 @@ public class Model
     public void restart(Level level)
     {
         setLevelSettings(level);
-        resetFreePoints();
+        initFreePoints();
         snake.reset();
         apples.reset();
         lastDirection = Direction.RIGHT;
         actualState = States.READY;
-
     }
 }
 

@@ -18,6 +18,9 @@ public class Controller implements Runnable
 {
     private final Model model;
     private final View view;
+    private double prevTime;
+    private double presTime;
+    private double sleepTime;
 
 
     public Controller(Model model, View view)
@@ -46,18 +49,26 @@ public class Controller implements Runnable
 
     private void play()
     {
+        prevTime = System.currentTimeMillis();
         while (model.getGameState() == States.PLAYING)
         {
+
             changeDirection(view.direction);
             model.moveSnake(model.lastDirection);
             view.paint();
-            try
+            sleepTime = model.speed - (System.currentTimeMillis() - prevTime);
+            if (sleepTime > 0)
             {
-                Thread.sleep(model.speed);
-            } catch (InterruptedException e)
-            {
-                System.exit(1);
+                try
+                {
+                    Thread.sleep((int) sleepTime);
+                    prevTime = System.currentTimeMillis();
+                } catch (InterruptedException e)
+                {
+                    System.exit(1);
+                }
             }
+
         }
         gameOver();
     }

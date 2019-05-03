@@ -68,33 +68,22 @@ class Menu extends JMenuBar
     private void arena()
     {
         arena = new JMenu("arena");
-        new ColorChoseMenu(new ArenaText(), "text color", new ArenaBackground(), "background color", arena);
+        new ColorChoseMenu(new ArenaText(), "text color", new ArenaBackground(), "background color", arena, view.colorsMap.keySet());
         settings.add(arena);
     }
 
     private void scoreBar()
     {
         scoreBar = new JMenu("score bar");
-        new ColorChoseMenu(new ScoreBarText(), "text color", new ScoreBarBackground(), "background color", scoreBar);
+        new ColorChoseMenu(new ScoreBarText(), "text color", new ScoreBarBackground(), "background color", scoreBar, view.colorsMap.keySet());
         settings.add((scoreBar));
     }
 
     private void snake()
     {
         snake = new JMenu("snake");
-        new ColorChoseMenu(new HeadSnakeListener(), "snake head", new BodySnakeListener(), "snake body", snake);
+        new ColorChoseMenu(new HeadSnakeListener(), "snake head", new BodySnakeListener(), "snake body", snake, view.snakeParts.keySet());
         settings.add(snake);
-    }
-
-    private void apple()
-    {
-        apple = new JMenu("apple");
-        settings.add(apple);
-    }
-
-    private void music()
-    {
-
     }
 
     private void SimpleMenu(String name, ActionListener actionListener, Set keySet)
@@ -107,10 +96,12 @@ class Menu extends JMenuBar
     private final class ColorChoseMenu extends JMenu
     {
         private final JMenu parent;
+        private final Set<String> keySet;
 
-        ColorChoseMenu(ActionListener actionListener, String name, ActionListener actionListener1, String name1, JMenu parent)
+        ColorChoseMenu(ActionListener actionListener, String name, ActionListener actionListener1, String name1, JMenu parent, Set keySet)
         {
             this.parent = parent;
+            this.keySet = keySet;
             jMenuCreator(name, actionListener);
             jMenuCreator(name1, actionListener1);
         }
@@ -118,7 +109,7 @@ class Menu extends JMenuBar
         private void jMenuCreator(String name, ActionListener actionListener)
         {
             JMenu jMenu = new JMenu(name);
-            new JMenuCreator(actionListener, jMenu, view.colorsMap.keySet());
+            new JMenuCreator(actionListener, jMenu, keySet);
             parent.add(jMenu);
         }
     }
