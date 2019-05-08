@@ -10,8 +10,8 @@ import java.util.HashSet;
 
 public class Model
 {
-    public final int WIDTH = 10;
-    public final int HEIGHT = 10;
+    public final int WIDTH = 40;
+    public final int HEIGHT = 40;
     public final int PROPORTION = 23;
     private final HashSet<Point> freePoints;
     public int bestScore = 0;
