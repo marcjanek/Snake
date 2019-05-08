@@ -7,7 +7,7 @@ class Main
     public static void main(String[] args)
     {
         Model model = new Model();
-        new Controller(model, new View(model));
-
+        View view = new View(model);
+        Controller controller = new Controller(model, view);
     }
 }

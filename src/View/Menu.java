@@ -50,15 +50,14 @@ class Menu extends JMenuBar
     private void settings()
     {
         settings = new JMenu("settings");
-        readyViews();
+        SimpleMenu("ready views", new ReadyViewsListener(), view.readyView.keySet());
         arena();
         scoreBar();
         snake();
-        SimpleMenu("apple", new AppleListener(), view.music.keySet());
+        SimpleMenu("apple", new AppleListener(), view.appleMap.keySet());
         SimpleMenu("music", new MusicListener(), view.music.keySet());
         add(settings);
     }
-
     private void readyViews()
     {
         readyViews = new JMenu("ready views");
@@ -152,7 +151,6 @@ class Menu extends JMenuBar
             }
         }
     }
-
     private class ScoreBarBackground implements ActionListener
     {
         public void actionPerformed(ActionEvent actionEvent)
@@ -160,7 +158,6 @@ class Menu extends JMenuBar
             view.setScoreBarBackground(actionEvent.getActionCommand());
         }
     }
-
     private class ScoreBarText implements ActionListener
     {
         public void actionPerformed(ActionEvent actionEvent)
@@ -168,7 +165,6 @@ class Menu extends JMenuBar
             view.setScoreBarText(actionEvent.getActionCommand());
         }
     }
-
     private class ArenaBackground implements ActionListener
     {
         public void actionPerformed(ActionEvent actionEvent)
@@ -176,7 +172,6 @@ class Menu extends JMenuBar
             view.setArenaBackground(actionEvent.getActionCommand());
         }
     }
-
     private class ArenaText implements ActionListener
     {
         public void actionPerformed(ActionEvent actionEvent)
@@ -214,6 +209,14 @@ class Menu extends JMenuBar
         public void actionPerformed(ActionEvent actionEvent)
         {
             view.setApple(actionEvent.getActionCommand());
+        }
+    }
+
+    private class ReadyViewsListener implements ActionListener
+    {
+        public void actionPerformed(ActionEvent actionEvent)
+        {
+            view.setReadyViews(actionEvent.getActionCommand());
         }
     }
 }

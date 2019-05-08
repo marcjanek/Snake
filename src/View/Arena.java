@@ -21,19 +21,18 @@ public class Arena extends JPanel
         this.model = model;
         this.view = view;
         setPreferredSize(new Dimension(model.PROPORTION * model.WIDTH, model.PROPORTION * model.HEIGHT));
-        setBackground(new Color(255, 0, 102));
     }
 
     public void paint(Graphics graphics)
     {
         super.paint(graphics);
+        Toolkit.getDefaultToolkit().sync();
         switch (model.getGameState())
         {
 
             case PLAYING:
             {
                 drawSnake(graphics);
-                Toolkit.getDefaultToolkit().sync();
                 break;
             }
             case GAME_OVER:
@@ -44,6 +43,7 @@ public class Arena extends JPanel
                 drawSnake(graphics);
                 break;
         }
+        Toolkit.getDefaultToolkit().sync();
 
     }
 
@@ -76,7 +76,6 @@ public class Arena extends JPanel
     private void drawGameOver(Graphics graphics)
     {
         String gameOver = "GAME OVER";
-        String score = "score:";
         graphics.setColor(text);
         graphics.setFont(new Font("TimesRoman", Font.PLAIN, 20));
         int x = (model.WIDTH * model.PROPORTION - graphics.getFontMetrics().stringWidth(gameOver)) / 2;

@@ -18,7 +18,6 @@ public class Score extends JPanel
     {
         this.model = model;
         setPreferredSize(new Dimension(model.PROPORTION * model.WIDTH, model.PROPORTION * SCORE_HEIGHT));
-        setBackground(new Color(0, 0, 0));
         setLayout(new GridBagLayout());
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         jLabel = new JLabel();
@@ -26,12 +25,12 @@ public class Score extends JPanel
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         add(jLabel, gridBagConstraints);
-        jLabel.setForeground(new Color(255, 255, 255));
         updateScore();
     }
 
     void updateScore()
     {
+        Toolkit.getDefaultToolkit().sync();
         jLabel.setText("Score: " + model.getScore() + " Best Score:" + Math.max(model.bestScore, model.getScore()) + " Actual date: " + formatter.format(new Date(System.currentTimeMillis())));
     }
 }

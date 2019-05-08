@@ -1,18 +1,17 @@
 package model;
 
+import controller.Controller;
 import enums.Direction;
 import enums.Level;
 import enums.States;
 
 import java.awt.*;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 public class Model
 {
-    public final int WIDTH = 40;
-    public final int HEIGHT = 40;
+    public final int WIDTH = 10;
+    public final int HEIGHT = 10;
     public final int PROPORTION = 23;
     private final HashSet<Point> freePoints;
     public int bestScore = 0;
@@ -22,6 +21,7 @@ public class Model
     private Snake snake;
     private Apples apples;
     private States actualState;
+    private Controller controller;
 
 
     public Model()
@@ -31,6 +31,11 @@ public class Model
         snake = new Snake(WIDTH, HEIGHT, freePoints);
         apples = new Apples(freePoints);
         actualState = States.READY;
+    }
+
+    public void setController(Controller controller)
+    {
+        this.controller = controller;
     }
 
     private void initFreePoints()
@@ -71,7 +76,7 @@ public class Model
         } else if (collision(newHead))
         {
             gameOver();
-            System.out.println("gameover");
+            controller.gameOverMusic();
         } else
         {
             snake.removeTail();
@@ -87,7 +92,6 @@ public class Model
 
     private boolean collision(Point newHead)
     {
-        System.out.println(newHead);
         return snake.contains(newHead) || (snake.head().x < 0 || snake.head().x >= WIDTH || snake.head().y < 0 || snake.head().y >= HEIGHT);
     }
 
