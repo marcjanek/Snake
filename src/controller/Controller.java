@@ -23,7 +23,6 @@ public class Controller implements Runnable
     private final Model model;
     private final View view;
     private double prevTime;
-    private double presTime;
     private double sleepTime;
     Clip clip;
     Clip gameOver;
