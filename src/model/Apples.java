@@ -21,6 +21,8 @@ class Apples
 
     void add(Point newHead)
     {
+        if(freePoints.isEmpty())
+            return;
         Point newApple;
         do
         {
@@ -31,7 +33,7 @@ class Apples
         freePoints.remove(newApple);
     }
 
-    void add()
+    private void add()
     {
         Point newApple = (Point) freePoints.toArray()[random.nextInt(freePoints.size())];
         apples.add(newApple);
@@ -64,5 +66,9 @@ class Apples
     Point get(int index)
     {
         return (Point) apples.toArray()[index];
+    }
+    int size()
+    {
+        return apples.size();
     }
 }

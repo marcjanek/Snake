@@ -1,22 +1,15 @@
 package controller;
 
 import View.View;
+import model.history.DataBase;
 import enums.Direction;
 import enums.States;
 import model.Model;
 
 import javax.sound.sampled.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 import java.util.Timer;
-import java.util.concurrent.TimeUnit;
 
 public class Controller implements Runnable
 {
@@ -173,7 +166,7 @@ public class Controller implements Runnable
             isMusicMuted = true;
     }
 
-    public void musicOpen(String name)
+    private void musicOpen(String name)
     {
 
         try
@@ -211,14 +204,14 @@ public class Controller implements Runnable
     public void muteMusic()
     {
         isMusicMuted = true;
-        if (clip.isOpen() && model.getGameState() == States.PLAYING)
+        if (clip.isOpen() && (model.getGameState() == States.PLAYING||model.getGameState()==States.GAME_OVER))
             clip.stop();
     }
 
     public void unMuteMusic()
     {
         isMusicMuted = false;
-        if (!clip.isRunning() && model.getGameState() == States.PLAYING)
+        if (!clip.isRunning() && (model.getGameState() == States.PLAYING||model.getGameState()==States.GAME_OVER))
             clip.start();
     }
 }

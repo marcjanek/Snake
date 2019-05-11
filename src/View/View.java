@@ -20,17 +20,15 @@ public class View
     final Map<String, String> snakeParts = new TreeMap<>();
     final Map<String, String> readyView = new TreeMap<>();
     public final Map<String, String> music = new TreeMap<>();
-    private final JFrame jFrame;
     private final Score score;
     private final Arena arena;
-    private final JPanel jPanel;
     private final Model model;
     private final Menu menu;
-    //  private final Image apple;
+    private final JPanel jPanel;
     public Direction direction = Direction.RIGHT;
     private GridBagConstraints gridBagConstraints = new GridBagConstraints();
     private Controller controller;
-    public View(Model model)
+    public View(final Model model)
     {
         initColorsMap();
         initMusicMap();
@@ -42,9 +40,25 @@ public class View
         arena = new Arena(model, this);
         menu = new Menu(model, this);
 
-        jFrame = new JFrame("Snake");
+        JFrame jFrame = new JFrame("Snake");
         jPanel = new JPanel();
-        intiWindow();
+        jFrame.add(menu);
+        jFrame.setJMenuBar(menu);
+        jFrame.setSize(1000, 1000);
+        jFrame.addKeyListener(new Keys());
+        jFrame.add(jPanel);
+        jPanel.setLayout(new GridBagLayout());
+        addPanel(0, score);
+        addPanel(1, arena);
+        setReadyViews("dark");
+
+        jFrame.setIconImage(new ImageIcon("src/pictures/snakeIcon.png").getImage());
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setResizable(false);
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.setVisible(true);
+        jFrame.toFront();
     }
 
     private void initReadyViews()
@@ -202,28 +216,6 @@ public class View
     public void paintScoreBar()
     {
         score.updateScore();
-    }
-
-    private void intiWindow()
-    {
-        jFrame.add(menu);
-        jFrame.setJMenuBar(menu);
-        jFrame.setSize(1000, 1000);
-        jFrame.addKeyListener(new Keys());
-        jFrame.add(jPanel);
-        jPanel.setLayout(new GridBagLayout());
-        addPanel(0, score);
-        addPanel(1, arena);
-        Random random = new Random();
-        setReadyViews("dark");
-
-        jFrame.setIconImage(new ImageIcon("src/pictures/snakeIcon.png").getImage());
-        jFrame.pack();
-        jFrame.setLocationRelativeTo(null);
-        jFrame.setResizable(false);
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setVisible(true);
-        jFrame.toFront();
     }
 
     private class Keys extends KeyAdapter

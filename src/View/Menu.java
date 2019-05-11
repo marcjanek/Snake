@@ -16,7 +16,7 @@ class Menu extends JMenuBar
     private final Model model;
     private final View view;
     private gameListener gameListener;
-    private JMenu newGame, snake, apple, music, readyViews, settings, backGround, text, arena, scoreBar;
+    private JMenu settings;
 
     private JMenuItem easy, medium, hard, expert;
 
@@ -31,7 +31,7 @@ class Menu extends JMenuBar
 
     private void newGame()
     {
-        newGame = new JMenu("new game");
+        JMenu newGame = new JMenu("new game");
         easy = new JMenuItem("easy");
         easy.addActionListener(gameListener);
         medium = new JMenuItem("medium");
@@ -58,29 +58,24 @@ class Menu extends JMenuBar
         SimpleMenu("music", new MusicListener(), view.music.keySet());
         add(settings);
     }
-    private void readyViews()
-    {
-        readyViews = new JMenu("ready views");
-        settings.add(readyViews);
-    }
 
     private void arena()
     {
-        arena = new JMenu("arena");
+        JMenu arena = new JMenu("arena");
         new ColorChoseMenu(new ArenaText(), "text color", new ArenaBackground(), "background color", arena, view.colorsMap.keySet());
         settings.add(arena);
     }
 
     private void scoreBar()
     {
-        scoreBar = new JMenu("score bar");
+        JMenu scoreBar = new JMenu("score bar");
         new ColorChoseMenu(new ScoreBarText(), "text color", new ScoreBarBackground(), "background color", scoreBar, view.colorsMap.keySet());
         settings.add((scoreBar));
     }
 
     private void snake()
     {
-        snake = new JMenu("snake");
+        JMenu snake = new JMenu("snake");
         new ColorChoseMenu(new HeadSnakeListener(), "snake head", new BodySnakeListener(), "snake body", snake, view.snakeParts.keySet());
         settings.add(snake);
     }

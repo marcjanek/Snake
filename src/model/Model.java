@@ -4,15 +4,17 @@ import controller.Controller;
 import enums.Direction;
 import enums.Level;
 import enums.States;
+import model.history.DataBase;
 
 import java.awt.*;
 import java.util.HashSet;
+import java.util.Queue;
 
 public class Model
 {
-    public final int WIDTH = 40;
-    public final int HEIGHT = 40;
-    public final int PROPORTION = 23;
+    public final int WIDTH = 53;
+    public final int HEIGHT = 26;
+    public final int PROPORTION = 24;
     private final HashSet<Point> freePoints;
     public int bestScore = 0;
     public long startTimeOfGame;
@@ -22,10 +24,12 @@ public class Model
     private Apples apples;
     private States actualState;
     private Controller controller;
+    private final DataBase dataBase;
 
 
     public Model()
     {
+        dataBase=new DataBase();
         freePoints = new HashSet<>();
         initFreePoints();
         snake = new Snake(WIDTH, HEIGHT, freePoints);
@@ -43,6 +47,10 @@ public class Model
         for (int i = 0; i < WIDTH; ++i)
             for (int j = 0; j < HEIGHT; ++j)
                 freePoints.add(new Point(i, j));
+    }
+    public Queue bestScores(final int number)
+    {
+        return dataBase.bestScores(number);
     }
 
     private Point moveHead(Direction direction)
@@ -88,6 +96,7 @@ public class Model
     {
         setGameState(States.GAME_OVER);
         bestScore = Math.max(getScore(), bestScore);
+        dataBase.add(getScore());
     }
 
     private boolean collision(Point newHead)
@@ -127,7 +136,7 @@ public class Model
 
     public int getApplesSize()
     {
-        return apples.MAX_APPLES;
+        return apples.size();
     }
 
     private void setLevelSettings(Level level)

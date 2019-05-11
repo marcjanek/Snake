@@ -1,15 +1,17 @@
-package controller.history;
+package model.history;
 
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class DataBase
+public final class DataBase
 {
     private Statement statement;
+    private final boolean isConnected;
 
-    DataBase()
+    public DataBase()
     {
+        boolean connect;
         try
         {
             final String url = "jdbc:oracle:thin:@ora3.elka.pw.edu.pl:1521:ora3inf";
@@ -39,15 +41,20 @@ public class DataBase
             statement = connection.createStatement();
             statement.execute(createTable);
             statement.execute(deleteData);
+            connect=true;
         } catch (SQLException e)
         {
             e.printStackTrace(System.out);
+            connect=false;
         }
+        isConnected=connect;
     }
 
-    void add(final int score)
+    public final void add(final int score)
     {
-        final String selectMaxID = "select nvl(MAX(id),0) max_id from scores";
+        if(!isConnected)
+            return;
+        final String selectMaxID = "SELECT NVL(MAX(ID),0) max_id FROM scores";
         final String insert = "INSERT INTO scores VALUES ( ";
         try
         {
@@ -60,10 +67,14 @@ public class DataBase
         }
     }
 
-    Queue bestScores(final int number)
+    public final Queue bestScores(int number)
     {
-        final String bestScores = "SELECT * FROM scores WHERE ROWNUM <= " + number + " ORDER BY score";
         final Queue<String> queue = new LinkedList<>();
+        if(!isConnected)
+            return queue;
+        if(number<0)
+            number=0;
+        final String bestScores = "SELECT * FROM scores WHERE ROWNUM <= " + number + " ORDER BY score";
         try
         {
             ResultSet resultSet = statement.executeQuery(bestScores);

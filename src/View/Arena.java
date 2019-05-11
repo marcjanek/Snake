@@ -4,6 +4,7 @@ import model.Model;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Queue;
 
 public class Arena extends JPanel
 {
@@ -37,6 +38,7 @@ public class Arena extends JPanel
             }
             case GAME_OVER:
                 drawGameOver(graphics);
+                drawBestScores(graphics);
                 break;
             case READY:
                 drawPressEnter(graphics);
@@ -44,9 +46,18 @@ public class Arena extends JPanel
                 break;
         }
         Toolkit.getDefaultToolkit().sync();
-
     }
+    private void drawBestScores(Graphics graphics)
+    {
+        final int MAX_SCORES=5;
+        Queue<String> scores=model.bestScores(10);
+        graphics.setColor(text);
+        graphics.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+        for(String s:scores)
+        {
 
+        }
+    }
     private void drawSnake(Graphics graphics)
     {
         Point point = model.getSnake(0);
