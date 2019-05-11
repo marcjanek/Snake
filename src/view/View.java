@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import controller.Controller;
 import enums.Direction;
@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 
 public class View
@@ -23,28 +22,26 @@ public class View
     private final Score score;
     private final Arena arena;
     private final Model model;
-    private final Menu menu;
     private final JPanel jPanel;
     public Direction direction = Direction.RIGHT;
-    private GridBagConstraints gridBagConstraints = new GridBagConstraints();
     private Controller controller;
     public View(final Model model)
     {
+        final int PROPORTION = 24;
         initColorsMap();
         initMusicMap();
         initAppleMap();
         initSnakeParts();
         initReadyViews();
         this.model = model;
-        score = new Score(model);
-        arena = new Arena(model, this);
-        menu = new Menu(model, this);
+        score = new Score(model, PROPORTION);
+        arena = new Arena(model, PROPORTION);
+        Menu menu = new Menu(model, this);
 
         JFrame jFrame = new JFrame("Snake");
         jPanel = new JPanel();
         jFrame.add(menu);
         jFrame.setJMenuBar(menu);
-        jFrame.setSize(1000, 1000);
         jFrame.addKeyListener(new Keys());
         jFrame.add(jPanel);
         jPanel.setLayout(new GridBagLayout());
@@ -124,28 +121,57 @@ public class View
             default:
             case "dark":
             {
-                setReadyViewsHelper("black", "red", "crimson", "white", "yellow star", "white star", "red apple");
+                setReadyViewsHelper(
+                        "black",
+                        "red",
+                        "crimson",
+                        "white",
+                        "yellow star",
+                        "white star",
+                        "red apple");
                 break;
             }
             case "light":
             {
-                setReadyViewsHelper("white", "blue", "gold", "coral", "red dot", "yellow dot", "red apple");
+                setReadyViewsHelper(
+                        "white",
+                        "blue",
+                        "gold",
+                        "coral",
+                        "red dot",
+                        "yellow dot",
+                        "red apple");
                 break;
+
             }
             case "apple fan":
             {
-                setReadyViewsHelper("gold", "red", "aqua", "gold", "black star", "white star", "apple logo");
+                setReadyViewsHelper(
+                        "gold",
+                        "red",
+                        "aqua",
+                        "gold",
+                        "black star",
+                        "white star",
+                        "apple logo");
                 break;
             }
             case "girlish":
             {
-                setReadyViewsHelper("deep pink", "olive", "coral", "gold", "white star", "white dot", "pineapple");
+                setReadyViewsHelper(
+                        "deep pink",
+                        "olive",
+                        "coral",
+                        "gold",
+                        "white star",
+                        "white dot",
+                        "pineapple");
                 break;
             }
         }
     }
 
-    private void setReadyViewsHelper(String arenaBackground, String arenaText, String scoreBackground, String scoreText, String head, String body, String apple)
+    private void setReadyViewsHelper(final String arenaBackground, final String arenaText, final String scoreBackground, final String scoreText, final String head, final String body, final String apple)
     {
         setArenaBackground(arenaBackground);
         setArenaText(arenaText);
@@ -155,27 +181,28 @@ public class View
         setSnakeBody(body);
         setApple(apple);
     }
-    void setScoreBarBackground(String colorName)
+
+    final void setScoreBarBackground(final String colorName)
     {
         score.setBackground(colorsMap.get(colorName));
     }
 
-    void setScoreBarText(String colorName)
+    final void setScoreBarText(final String colorName)
     {
         score.jLabel.setForeground(colorsMap.get(colorName));
     }
 
-    void setArenaBackground(String colorName)
+    final void setArenaBackground(final String colorName)
     {
         arena.setBackground(colorsMap.get(colorName));
     }
 
-    void setArenaText(String colorName)
+    final void setArenaText(final String colorName)
     {
         arena.text = colorsMap.get(colorName);
     }
 
-    void setSnakeBody(String name)
+    final void setSnakeBody(final String name)
     {
         arena.snake = new ImageIcon("src/pictures/" + snakeParts.get(name)).getImage();
     }
@@ -202,8 +229,7 @@ public class View
 
     private void addPanel(int gridy, Component component)
     {
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.gridx = 0;
+        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridy = gridy;
         jPanel.add(component, gridBagConstraints);
     }
@@ -252,10 +278,13 @@ public class View
                 }
                 case KeyEvent.VK_ENTER:
                 {
-                    if (model.getGameState() == States.READY)
+                    if (model.actualState == States.READY)
                     {
                         direction = Direction.RIGHT;
-                        model.setGameState(States.PLAYING);
+                        model.actualState = States.PLAYING;
+                    } else if (model.actualState == States.GAME_OVER)
+                    {
+                        model.restart();
                     }
                 }
             }

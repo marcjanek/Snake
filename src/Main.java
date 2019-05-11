@@ -1,12 +1,15 @@
-import model.Model;
 import controller.Controller;
-import View.*;
+import model.Model;
+import view.View;
 
-class Main
+/**
+ * class connecting classes in MVC model
+ */
+final class Main
 {
     public static void main(String[] args)
     {
-        Model model = new Model();
+        final Model model = new Model();
         new Controller(model, new View(model));
     }
 }

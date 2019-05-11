@@ -1,35 +1,42 @@
 package controller;
 
-import View.View;
-import model.history.DataBase;
 import enums.Direction;
 import enums.States;
 import model.Model;
+import view.View;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.io.File;
-import java.util.*;
+import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 
-public class Controller implements Runnable
+/**
+ * class controlling game states and performing actions during game states changes.
+ */
+public final class Controller implements Runnable
 {
     private final Model model;
     private final View view;
-    private double prevTime;
-    private double sleepTime;
-    Clip clip;
-    Clip gameOver;
-    Random random = new Random();
+    private Clip clip;
+    private Clip gameOver;
     private boolean isMusicMuted = false;
 
-
-    public Controller(Model model, View view)
+    /**
+     * Class constructor
+     *
+     * @param model
+     * @param view
+     */
+    public Controller(final Model model, final View view)
     {
         this.model = model;
         this.view = view;
         model.setController(this);
         view.setController(this);
-        new Thread(this::run).start();
+        model.restart();
+        new Thread(this).start();
         try
         {
             clip = AudioSystem.getClip();
@@ -41,9 +48,12 @@ public class Controller implements Runnable
         ready();
     }
 
+    /**
+     * method representing waiting for start of the game
+     */
     private void ready()
     {
-        while (model.getGameState() != States.PLAYING)
+        while (model.actualState != States.PLAYING)
         {
             view.paint();
             try
@@ -57,20 +67,21 @@ public class Controller implements Runnable
         play();
     }
 
+    /**
+     * method representing playing snake
+     */
     private void play()
     {
+        long prevTime, sleepTime;
         if (!isMusicMuted && clip.isOpen())
-        {
             clip.start();
-        }
-        prevTime = System.currentTimeMillis();
-        while (model.getGameState() == States.PLAYING)
+        model.startTimeOfGame = prevTime = System.currentTimeMillis();
+        while (model.actualState == States.PLAYING)
         {
-
             changeDirection(view.direction);
             model.moveSnake(model.lastDirection);
             view.paint();
-            sleepTime = model.speed - (System.currentTimeMillis() - prevTime);
+            sleepTime = model.speed - System.currentTimeMillis() + prevTime;
             if (sleepTime > 0)
             {
                 try
@@ -79,6 +90,7 @@ public class Controller implements Runnable
                     prevTime = System.currentTimeMillis();
                 } catch (InterruptedException e)
                 {
+                    e.printStackTrace(System.out);
                     System.exit(1);
                 }
             }
@@ -87,22 +99,31 @@ public class Controller implements Runnable
         gameOver();
     }
 
+    /**
+     * method representing game over state.
+     */
     private void gameOver()
     {
-        while (model.getGameState() != States.READY)
+        while (model.actualState != States.READY)
         {
             try
             {
                 Thread.sleep(10);
             } catch (InterruptedException e)
             {
+                e.printStackTrace(System.out);
                 System.exit(1);
             }
         }
+        if (gameOver != null && gameOver.isRunning())
+            gameOver.stop();
         ready();
     }
 
-    public void gameOverMusic()
+    /**
+     * If music is loaded and unmute, play game over sound
+     */
+    public final void gameOverMusic()
     {
         if (!isMusicMuted)
         {
@@ -116,13 +137,15 @@ public class Controller implements Runnable
             }
             gameOver.start();
         }
-
     }
 
+    /**
+     * additional thread for score bar repainting method
+     */
     @Override
-    public void run()
+    public final void run()
     {
-        Timer timer = new Timer();
+        final Timer timer = new Timer();
         timer.schedule(new TimerTask()
         {
             public void run()
@@ -132,7 +155,12 @@ public class Controller implements Runnable
         }, 0, 10);
     }
 
-    private void changeDirection(Direction newDirection)
+    /**
+     * method change direction if it is not equal to direction in last move and if it is not equal to opposite direction in last move
+     *
+     * @param newDirection
+     */
+    private void changeDirection(final Direction newDirection)
     {
         if (model.lastDirection != newDirection)
             switch (newDirection)
@@ -152,38 +180,40 @@ public class Controller implements Runnable
             }
     }
 
+    /**
+     *  method playing random song from loaded
+     */
     private void initMusic()
     {
-        if (view.music.size() > 2)
+        if (view.music.size() > 1)
         {
+            final Random random=new Random();
             String songName;
             do
             {
                 songName = (String) view.music.keySet().toArray()[random.nextInt(view.music.size())];
             } while (songName.equals("mute") || songName.equals("unmute"));
-            musicOpen(songName);
+
+            try
+            {
+                if (clip.isOpen())
+                    clip.close();
+                clip.open(AudioSystem.getAudioInputStream(new File("src/songs/" + songName + ".wav")));
+            } catch (Exception e)
+            {
+                e.printStackTrace(System.out);
+            }
         } else
             isMusicMuted = true;
     }
 
-    private void musicOpen(String name)
+    /**
+     * start new song if playing game. If song is not loaded, does not play any music clip
+     *
+     * @param name song name without file extension
+     */
+    public void changeSong(final String name)
     {
-
-        try
-        {
-            if (clip.isOpen())
-                clip.close();
-            clip.open(AudioSystem.getAudioInputStream(new File("src/songs/" + name + ".wav")));
-        } catch (Exception exc)
-        {
-            exc.printStackTrace(System.out);
-        }
-
-    }
-
-    public void changeSong(String name)
-    {
-        clip.stop();
         try
         {
             if (clip.isRunning())
@@ -193,25 +223,33 @@ public class Controller implements Runnable
             if (isMusicMuted)
                 isMusicMuted = false;
             clip.open(AudioSystem.getAudioInputStream(new File("src/songs/" + name + ".wav")));
-            if (model.getGameState() == States.PLAYING)
+            if (model.actualState == States.PLAYING)
                 clip.start();
-        } catch (Exception exc)
+        } catch (Exception e)
         {
-            exc.printStackTrace(System.out);
+            e.printStackTrace(System.out);
         }
     }
 
+    /**
+     * method stops music
+     */
     public void muteMusic()
     {
         isMusicMuted = true;
-        if (clip.isOpen() && (model.getGameState() == States.PLAYING||model.getGameState()==States.GAME_OVER))
+        if (clip.isOpen() && model.actualState == States.PLAYING)
             clip.stop();
+        if (gameOver.isOpen() && model.actualState == States.GAME_OVER)
+            gameOver.stop();
     }
 
+    /**
+     * method starts music if game is played
+     */
     public void unMuteMusic()
     {
         isMusicMuted = false;
-        if (!clip.isRunning() && (model.getGameState() == States.PLAYING||model.getGameState()==States.GAME_OVER))
+        if (model.actualState == States.PLAYING)
             clip.start();
     }
 }

@@ -1,63 +1,101 @@
 package model;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
-class Snake
+/**
+ * class representing snake body
+ */
+final class Snake
 {
+    /**
+     *
+     */
     private final int START_X;
     private final int START_Y;
-    ArrayList<Point> snakeBody;
-    HashSet<Point> freePoints;
+    private final LinkedList<Point> snakeBody;
+    private final HashSet<Point> freePoints;
 
-    Snake(int WIDTH, int HEIGHT, HashSet freePoints)
+    /**
+     * @param WIDTH      game arena width
+     * @param HEIGHT     game arena height
+     * @param freePoints reference to hashSet which contains all free coordinates in arena
+     */
+    Snake(final int WIDTH, final int HEIGHT, final HashSet<Point> freePoints)
     {
-        snakeBody = new ArrayList<>();
+        snakeBody = new LinkedList<>();
         this.freePoints = freePoints;
-
         START_X = WIDTH / 4;
         START_Y = HEIGHT / 2;
         add(new Point(START_X, START_Y));
     }
 
-    Point get(int index)
+    /**
+     * method returning snake list
+     *
+     * @return snake body list
+     */
+    final Queue<Point> get()
     {
-        return snakeBody.get(index);
+        return new LinkedList<>(snakeBody);
     }
 
-    Point head()
+    /**
+     * method returning snake head coordinates
+     *
+     * @return snake head coordinates
+     */
+    final Point head()
     {
-        return snakeBody.get(0);
+        return snakeBody.getFirst();
     }
-    void reset()
+
+    /**
+     * resets all class settings
+     */
+    final void reset()
     {
         snakeBody.clear();
-        snakeBody.add(0, new Point(START_X, START_Y));
-        freePoints.remove(new Point(START_X, START_Y));
+        add(new Point(START_X, START_Y));
     }
 
-    void removeTail()
+    /**
+     * method poll snake tail and adds it to freePoints hashSet
+     */
+    final void removeTail()
     {
-        freePoints.add(snakeBody.remove(snakeBody.size() - 1));
+        freePoints.add(snakeBody.pollLast());
     }
 
-    void add(Point point)
+    /**
+     * adds point to snake body and remove from freePoints hashSet
+     *
+     * @param point coordinates to be add to snake body
+     */
+    final void add(final Point point)
     {
         freePoints.remove(point);
-        snakeBody.add(0, point);
-    }
-    int score()
-    {
-        return snakeBody.size() - 1;
+        snakeBody.addFirst(point);
     }
 
-    int size()
+    /**
+     * method calculating size of snake
+     * @return length of snake
+     */
+    final int size()
     {
         return snakeBody.size();
     }
 
-    boolean contains(Point point)
+    /**
+     * method check if point contains to snake body
+     *
+     * @param point point to be checked
+     * @return true if snake body contains point
+     */
+    final boolean contains(final Point point)
     {
         return snakeBody.contains(point);
     }

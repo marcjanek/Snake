@@ -2,5 +2,5 @@ package enums;
 
 public enum Level
 {
-    EASY, MEDIUM, HARD, EXPERT
+    NOOB, MEDIUM, HARD, EXPERT
 }

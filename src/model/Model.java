@@ -5,26 +5,28 @@ import enums.Direction;
 import enums.Level;
 import enums.States;
 import model.history.DataBase;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Queue;
 
-public class Model
+public final class Model
 {
     public final int WIDTH = 53;
     public final int HEIGHT = 26;
-    public final int PROPORTION = 24;
     private final HashSet<Point> freePoints;
     public int bestScore = 0;
     public long startTimeOfGame;
     public int speed = 500;
     public Direction lastDirection = Direction.RIGHT;
-    private Snake snake;
-    private Apples apples;
-    private States actualState;
+    private final Snake snake;
+    private final Fruits fruits;
+    public States actualState;
     private Controller controller;
     private final DataBase dataBase;
+    private Level level = Level.MEDIUM;
 
 
     public Model()
@@ -33,11 +35,11 @@ public class Model
         freePoints = new HashSet<>();
         initFreePoints();
         snake = new Snake(WIDTH, HEIGHT, freePoints);
-        apples = new Apples(freePoints);
+        fruits = new Fruits(freePoints);
         actualState = States.READY;
     }
 
-    public void setController(Controller controller)
+    public final void setController(final Controller controller)
     {
         this.controller = controller;
     }
@@ -48,11 +50,14 @@ public class Model
             for (int j = 0; j < HEIGHT; ++j)
                 freePoints.add(new Point(i, j));
     }
-    public Queue bestScores(final int number)
+
+    public final Queue<String> bestScores(final int number)
     {
         return dataBase.bestScores(number);
     }
 
+    @NotNull
+    @Contract("_ -> new")
     private Point moveHead(Direction direction)
     {
         int x = snake.head().x;
@@ -68,19 +73,18 @@ public class Model
             case UP:
                 return new Point(x, --y);
             default:
-                return new Point(0, 0);
-
+                return new Point(x, y);
         }
     }
 
-    public void moveSnake(Direction direction)
+    public final void moveSnake(final Direction direction)
     {
-        Point newHead = moveHead(direction);
-        if (apples.contains(newHead))
+        final Point newHead = moveHead(direction);
+        if (fruits.contains(newHead))
         {
-            apples.remove(newHead);
+            fruits.remove(newHead);
             snake.add(newHead);
-            apples.add(newHead);
+            fruits.add(newHead);
         } else if (collision(newHead))
         {
             gameOver();
@@ -92,82 +96,73 @@ public class Model
         }
     }
 
+    public final Queue<Point> getFruits()
+    {
+        return fruits.get();
+    }
+
     private void gameOver()
     {
-        setGameState(States.GAME_OVER);
+        actualState = States.GAME_OVER;
         bestScore = Math.max(getScore(), bestScore);
-        dataBase.add(getScore());
+        long currentTimeMillis = System.currentTimeMillis();
+        dataBase.add(getScore(),
+                currentTimeMillis,
+                (currentTimeMillis - startTimeOfGame) / 1000,
+                level.toString());
     }
 
-    private boolean collision(Point newHead)
+    private boolean collision(final Point newHead)
     {
-        return snake.contains(newHead) || (snake.head().x < 0 || snake.head().x >= WIDTH || snake.head().y < 0 || snake.head().y >= HEIGHT);
+        final Point head = snake.head();
+        return snake.contains(newHead) || (head.x < 0 || head.x >= WIDTH || head.y < 0 || head.y >= HEIGHT);
     }
 
-    public int getScore()
+    public final int getScore()
     {
-        return snake.score();
+        return snake.size() - 1;
     }
 
-    public States getGameState()
+    public final Queue<Point> getSnake()
     {
-        return actualState;
-    }
-
-    public void setGameState(States newState)
-    {
-        this.actualState = newState;
-    }
-
-    public Point getSnake(int index)
-    {
-        return snake.get(index);
-    }
-
-    public int getSnakeSize()
-    {
-        return snake.size();
-    }
-
-    public Point getApple(int index)
-    {
-        return apples.get(index);
-    }
-
-    public int getApplesSize()
-    {
-        return apples.size();
+        return snake.get();
     }
 
     private void setLevelSettings(Level level)
     {
+        this.level = level;
         switch (level)
         {
-            case EASY:
+            case NOOB:
                 speed = 500;
-                apples.MAX_APPLES = 50;
+                fruits.maxFruits = 50;
                 break;
             case MEDIUM:
                 speed = 200;
-                apples.MAX_APPLES = 20;
+                fruits.maxFruits = 20;
                 break;
             case HARD:
                 speed = 100;
-                apples.MAX_APPLES = 10;
+                fruits.maxFruits = 10;
                 break;
             case EXPERT:
                 speed = 50;
-                apples.MAX_APPLES = 1;
+                fruits.maxFruits = 1;
                 break;
         }
     }
 
-    public void restart(Level level)
+    public final void restart()
+    {
+        restart(level);
+    }
+
+    public final void restart(Level level)
     {
         setLevelSettings(level);
         initFreePoints();
         snake.reset();
-        apples.reset();
+        fruits.reset();
         lastDirection = Direction.RIGHT;
         actualState = States.READY;
     }
