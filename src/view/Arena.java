@@ -1,6 +1,7 @@
 package view;
 
 import model.Model;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,7 +79,7 @@ final class Arena extends JPanel
     {
         final Queue<Point> snakeBody = model.getSnake();
         Point head = snakeBody.poll();
-        graphics.drawImage(snakeHead, Objects.requireNonNull(head).x * PROPORTION, head.y * PROPORTION, PROPORTION, PROPORTION, this);
+        graphics.drawImage(snakeHead, head.x * PROPORTION, head.y * PROPORTION, PROPORTION, PROPORTION, this);
         for (final Point body : snakeBody)
         {
             graphics.drawImage(snake, body.x * PROPORTION, body.y * PROPORTION, PROPORTION, PROPORTION, this);

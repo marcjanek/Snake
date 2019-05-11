@@ -33,7 +33,6 @@ public final class Controller implements Runnable
     {
         this.model = model;
         this.view = view;
-        model.setController(this);
         view.setController(this);
         model.restart();
         new Thread(this).start();
@@ -72,6 +71,7 @@ public final class Controller implements Runnable
      */
     private void play()
     {
+        model.collision = false;
         long prevTime, sleepTime;
         if (!isMusicMuted && clip.isOpen())
             clip.start();
@@ -104,6 +104,8 @@ public final class Controller implements Runnable
      */
     private void gameOver()
     {
+        if (model.collision)
+            gameOverMusic();
         while (model.actualState != States.READY)
         {
             try

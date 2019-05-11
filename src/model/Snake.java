@@ -11,11 +11,20 @@ import java.util.Queue;
 final class Snake
 {
     /**
-     *
+     * constraint holding start x-axis position
      */
     private final int START_X;
+    /**
+     * constraint holding start y-axis position
+     */
     private final int START_Y;
+    /**
+     * Linked list holding coordinates of snake body where on the beginning is snake's head
+     */
     private final LinkedList<Point> snakeBody;
+    /**
+     * hashSet which contains all free coordinates in arena
+     */
     private final HashSet<Point> freePoints;
 
     /**
@@ -33,7 +42,7 @@ final class Snake
     }
 
     /**
-     * method returning snake list
+     * method returning list of snake body coordinates
      *
      * @return snake body list
      */
@@ -53,7 +62,7 @@ final class Snake
     }
 
     /**
-     * resets all class settings
+     * method resets all class settings to construction settings
      */
     final void reset()
     {
@@ -72,7 +81,7 @@ final class Snake
     /**
      * adds point to snake body and remove from freePoints hashSet
      *
-     * @param point coordinates to be add to snake body
+     * @param point coordinates to be added to snake body
      */
     final void add(final Point point)
     {
@@ -90,10 +99,10 @@ final class Snake
     }
 
     /**
-     * method check if point contains to snake body
+     * method checks if point contains to snake body
      *
-     * @param point point to be checked
-     * @return true if snake body contains point
+     * @param point point to be checked if contains to snake body
+     * @return true if snake body contains point, else false
      */
     final boolean contains(final Point point)
     {

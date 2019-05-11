@@ -6,13 +6,29 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public final class DataBase
+/**
+ * class to connect with Oracle database and perform operations like add and search
+ */
+public final class Database
 {
-    private Statement statement;
-    private final boolean isConnected;
+    /**
+     * constant is true if connection with Oracle database was successful
+     */
+    private final boolean IS_CONNECTED;
+    /**
+     * constant having name of table in database
+     */
     private final String TABLE_NAME = "SCORES";
+    /**
+     * used for executing statements like INSERT,CREATE and SELECT
+     */
+    private Statement statement;
 
-    public DataBase()
+    /**
+     * constructor try to connect with Oracle database and
+     * if connection is successful, creates new table also performing cleaning data in this table
+     */
+    public Database()
     {
         boolean connect;
         try
@@ -27,10 +43,10 @@ public final class DataBase
                     "    v_sql:='create table " + TABLE_NAME + "\n" +
                     "  (\n" +
                     "  ID           NUMBER(3)    PRIMARY KEY,\n" +
-                    "  score        NUMBER(3)    NOT NULL,\n" +
-                    "  game_date    NUMBER(20) NOT NULL,\n" +
-                    "  time         NUMBER(10)  NOT NULL,\n" +
-                    "  game_level   VARCHAR2(20)  NOT NULL \n" +
+                    "  SCORE        NUMBER(3)    NOT NULL,\n" +
+                    "  GAME_DATA    NUMBER(20) NOT NULL,\n" +
+                    "  TIME         NUMBER(10)  NOT NULL,\n" +
+                    "  GAME_LEVEL   VARCHAR2(20)  NOT NULL \n" +
                     "  " +
                     "  )';\n" +
                     "    execute immediate v_sql;\n" +
@@ -54,12 +70,20 @@ public final class DataBase
             e.printStackTrace(System.out);
             connect=false;
         }
-        isConnected=connect;
+        IS_CONNECTED = connect;
     }
 
+    /**
+     * if is connection, method adds new record to database
+     *
+     * @param score     game score
+     * @param gameDate  game end date
+     * @param time      time of game
+     * @param gameLevel level of game
+     */
     public final void add(final int score, final long gameDate, final long time, final String gameLevel)
     {
-        if(!isConnected)
+        if(!IS_CONNECTED)
             return;
         final String selectMaxID = "SELECT NVL(MAX(ID),0) max_id FROM " + TABLE_NAME;
         final String insert = "INSERT INTO " + TABLE_NAME + " VALUES ( ";
@@ -80,11 +104,16 @@ public final class DataBase
         }
     }
 
+    /**
+     * method returning best records
+     * @param number number of best records
+     * @return records in output format
+     */
     public final Queue<String> bestScores(int number)
     {
         final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         final Queue<String> queue = new LinkedList<>();
-        if(!isConnected)
+        if(!IS_CONNECTED)
             return queue;
         if(number<0)
             number=0;

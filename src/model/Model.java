@@ -1,10 +1,9 @@
 package model;
 
-import controller.Controller;
 import enums.Direction;
 import enums.Level;
 import enums.States;
-import model.history.DataBase;
+import model.history.Database;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,24 +13,65 @@ import java.util.Queue;
 
 public final class Model
 {
+    /**
+     * arena width
+     */
     public final int WIDTH = 53;
+    /**
+     * arena height
+     */
     public final int HEIGHT = 26;
+    /**
+     * hashSet which contains all free coordinates in arena
+     */
     private final HashSet<Point> freePoints;
-    public int bestScore = 0;
-    public long startTimeOfGame;
-    public int speed = 500;
-    public Direction lastDirection = Direction.RIGHT;
+    /**
+     * class representing snake body
+     */
     private final Snake snake;
+    /**
+     * class performing operations on fruits collection
+     */
     private final Fruits fruits;
+    /**
+     * //class accepts input and converts it to commands for the model or view
+     */
+    private final Database dataBase;
+    /**
+     * best score in ended games
+     */
+    public int bestScore = 0;
+    /**
+     * time of start game
+     */
+    public long startTimeOfGame;
+    /**
+     * time between move in milliseconds
+     */
+    public int speed = 500;
+    /**
+     * direction in last move
+     */
+    public Direction lastDirection = Direction.RIGHT;
+    /**
+     * actual state of game
+     */
     public States actualState;
-    private Controller controller;
-    private final DataBase dataBase;
+    /**
+     * boolean representing true if game ended with collision, else false
+     */
+    public boolean collision = false;
+    /**
+     * current level of game
+     */
     private Level level = Level.MEDIUM;
 
-
+    /**
+     * constructor initialize classes: Snake, Fruits, Database
+     */
     public Model()
     {
-        dataBase=new DataBase();
+        dataBase = new Database();
         freePoints = new HashSet<>();
         initFreePoints();
         snake = new Snake(WIDTH, HEIGHT, freePoints);
@@ -39,11 +79,9 @@ public final class Model
         actualState = States.READY;
     }
 
-    public final void setController(final Controller controller)
-    {
-        this.controller = controller;
-    }
-
+    /**
+     * method initializing collection with free coordinates
+     */
     private void initFreePoints()
     {
         for (int i = 0; i < WIDTH; ++i)
@@ -51,14 +89,25 @@ public final class Model
                 freePoints.add(new Point(i, j));
     }
 
+    /**
+     * method returning best records from database
+     *
+     * @param number number of best records
+     * @return records in output format
+     */
     public final Queue<String> bestScores(final int number)
     {
         return dataBase.bestScores(number);
     }
 
+    /**
+     * method return new head coordinates
+     * @param direction direction in which snake's head move
+     * @return new head coordinates
+     */
     @NotNull
     @Contract("_ -> new")
-    private Point moveHead(Direction direction)
+    private Point moveHead(final Direction direction)
     {
         int x = snake.head().x;
         int y = snake.head().y;
@@ -77,6 +126,10 @@ public final class Model
         }
     }
 
+    /**
+     * method performing move of all snake and checking collecting fruits and collisions
+     * @param direction direction in which snake's head move
+     */
     public final void moveSnake(final Direction direction)
     {
         final Point newHead = moveHead(direction);
@@ -87,8 +140,8 @@ public final class Model
             fruits.add(newHead);
         } else if (collision(newHead))
         {
+            collision=true;
             gameOver();
-            controller.gameOverMusic();
         } else
         {
             snake.removeTail();
@@ -96,39 +149,65 @@ public final class Model
         }
     }
 
+    /**
+     * method returning list of fruits collection coordinates
+     * @return fruits collection coordinates
+     */
     public final Queue<Point> getFruits()
     {
         return fruits.get();
     }
 
+    /**
+     * method change state to game over,changes if best score and adding game statistic to database
+     */
     private void gameOver()
     {
         actualState = States.GAME_OVER;
         bestScore = Math.max(getScore(), bestScore);
-        long currentTimeMillis = System.currentTimeMillis();
+        final long currentTimeMillis = System.currentTimeMillis();
         dataBase.add(getScore(),
                 currentTimeMillis,
                 (currentTimeMillis - startTimeOfGame) / 1000,
                 level.toString());
     }
 
+    /**
+     * method check if head hit snake body or hit wall
+     * @param newHead new head coordinates
+     * @return true if hit, else false
+     */
     private boolean collision(final Point newHead)
     {
         final Point head = snake.head();
         return snake.contains(newHead) || (head.x < 0 || head.x >= WIDTH || head.y < 0 || head.y >= HEIGHT);
     }
 
+    /**
+     * method return actual score
+     * @return actual score
+     */
     public final int getScore()
     {
         return snake.size() - 1;
     }
 
+    /**
+     * method returning snake's body coordinates
+     *
+     * @return snake body list
+     */
     public final Queue<Point> getSnake()
     {
         return snake.get();
     }
 
-    private void setLevelSettings(Level level)
+    /**
+     * method to change level of game
+     *
+     * @param level new level of game
+     */
+    private void setLevelSettings(final Level level)
     {
         this.level = level;
         switch (level)
@@ -152,12 +231,20 @@ public final class Model
         }
     }
 
+    /**
+     * method restarting game on current level
+     */
     public final void restart()
     {
         restart(level);
     }
 
-    public final void restart(Level level)
+    /**
+     * method restarting game with settings in the parameters
+     *
+     * @param level new level of game
+     */
+    public final void restart(final Level level)
     {
         setLevelSettings(level);
         initFreePoints();
