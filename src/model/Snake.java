@@ -1,5 +1,7 @@
 package model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,6 +23,7 @@ final class Snake
     /**
      * Linked list holding coordinates of snake body where on the beginning is snake's head
      */
+    @NotNull
     private final LinkedList<Point> snakeBody;
     /**
      * hashSet which contains all free coordinates in arena
@@ -28,6 +31,7 @@ final class Snake
     private final HashSet<Point> freePoints;
 
     /**
+     * initialize snake body list and puts snake's head on start coordinates
      * @param WIDTH      game arena width
      * @param HEIGHT     game arena height
      * @param freePoints reference to hashSet which contains all free coordinates in arena
@@ -42,17 +46,18 @@ final class Snake
     }
 
     /**
-     * method returning list of snake body coordinates
+     * returns list of snake body coordinates
      *
      * @return snake body list
      */
+    @NotNull
     final Queue<Point> get()
     {
         return new LinkedList<>(snakeBody);
     }
 
     /**
-     * method returning snake head coordinates
+     * returns snake head coordinates
      *
      * @return snake head coordinates
      */
@@ -62,7 +67,7 @@ final class Snake
     }
 
     /**
-     * method resets all class settings to construction settings
+     * resets all class settings to construction settings
      */
     final void reset()
     {
@@ -71,7 +76,7 @@ final class Snake
     }
 
     /**
-     * method poll snake tail and adds it to freePoints hashSet
+     * polls snake tail
      */
     final void removeTail()
     {
@@ -79,7 +84,7 @@ final class Snake
     }
 
     /**
-     * adds point to snake body and remove from freePoints hashSet
+     * adds point to snake body
      *
      * @param point coordinates to be added to snake body
      */
@@ -90,7 +95,7 @@ final class Snake
     }
 
     /**
-     * method calculating size of snake
+     * calculates size of snake
      * @return length of snake
      */
     final int size()
@@ -99,7 +104,7 @@ final class Snake
     }
 
     /**
-     * method checks if point contains to snake body
+     * checks if point contains to snake body
      *
      * @param point point to be checked if contains to snake body
      * @return true if snake body contains point, else false

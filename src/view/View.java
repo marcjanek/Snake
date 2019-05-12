@@ -4,33 +4,84 @@ import controller.Controller;
 import enums.Direction;
 import enums.States;
 import model.Model;
+import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
+/**
+ * user interface
+ */
 public class View
 {
+    /**
+     * collection with names of loaded clips
+     */
+    @NotNull
+    public final Map<String, String> musicMap = new TreeMap<>();
+    /**
+     * collection with names of implemented colors
+     */
+    @NotNull
     final Map<String, Color> colorsMap = new TreeMap<>();
-    final Map<String, String> appleMap = new TreeMap<>();
-    final Map<String, String> snakeParts = new TreeMap<>();
+    /**
+     * collection with names of fruits pictures
+     */
+    @NotNull
+    final Map<String, String> fruitMap = new TreeMap<>();
+    /**
+     * collection with names of snakeBody body pictures
+     */
+    @NotNull
+    final Map<String, String> snakeMap = new TreeMap<>();
+    /**
+     * collection with names of ready views
+     */
+    @NotNull
     final Map<String, String> readyView = new TreeMap<>();
-    public final Map<String, String> music = new TreeMap<>();
+    /**
+     * reference to class Score
+     */
+    @NotNull
     private final Score score;
+    /**
+     * reference to class Arena
+     */
+    @NotNull
     private final Arena arena;
+    /**
+     * reference to class Model
+     */
+    @NotNull
     private final Model model;
-    private final JPanel jPanel;
+    /**
+     * last pressed direction
+     */
+    @NotNull
     public Direction direction = Direction.RIGHT;
+    /**
+     * reference to class controller
+     */
     private Controller controller;
-    public View(final Model model)
+
+    /**
+     * class constructor creates user interface
+     *
+     * @param model reference to class Model
+     */
+    public View(@NotNull final Model model)
     {
         final int PROPORTION = 24;
         initColorsMap();
         initMusicMap();
-        initAppleMap();
+        initFruitMap();
         initSnakeParts();
         initReadyViews();
         this.model = model;
@@ -39,17 +90,32 @@ public class View
         Menu menu = new Menu(model, this);
 
         JFrame jFrame = new JFrame("Snake");
-        jPanel = new JPanel();
+        final JPanel jPanel = new JPanel();
         jFrame.add(menu);
         jFrame.setJMenuBar(menu);
         jFrame.addKeyListener(new Keys());
         jFrame.add(jPanel);
         jPanel.setLayout(new GridBagLayout());
-        addPanel(0, score);
-        addPanel(1, arena);
+        final class AddPanel
+        {
+            private AddPanel(final int gridy, @NotNull final Component component)
+            {
+                final GridBagConstraints gridBagConstraints = new GridBagConstraints();
+                gridBagConstraints.gridy = gridy;
+                jPanel.add(component, gridBagConstraints);
+            }
+        }
+        new AddPanel(0, score);
+        new AddPanel(1, arena);
         setReadyViews("dark");
-
-        jFrame.setIconImage(new ImageIcon("src/pictures/snakeIcon.png").getImage());
+        try
+        {
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/snakeIcon.png");
+            jFrame.setIconImage(new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage());
+        } catch (Exception e)
+        {
+            e.printStackTrace(System.out);
+        }
         jFrame.pack();
         jFrame.setLocationRelativeTo(null);
         jFrame.setResizable(false);
@@ -58,19 +124,153 @@ public class View
         jFrame.toFront();
     }
 
-    private void initReadyViews()
-    {
-        readyView.put("dark", "");
-        readyView.put("light", "");
-        readyView.put("apple fan", "");
-        readyView.put("girlish", "");
-    }
-
-    public void setController(Controller controller)
+    /**
+     * sets new controller
+     *
+     * @param controller reference to controller
+     */
+    public void setController(final Controller controller)
     {
         this.controller = controller;
     }
 
+    /**
+     * sets color of score bar background
+     *
+     * @param colorName name of new color
+     */
+    final void setScoreBarBackground(final String colorName)
+    {
+        score.setBackground(colorsMap.get(colorName));
+    }
+
+    /**
+     * sets color of score bar text
+     *
+     * @param colorName name of new color
+     */
+    final void setScoreBarText(final String colorName)
+    {
+        score.jLabel.setForeground(colorsMap.get(colorName));
+    }
+
+    /**
+     * sets color of arena background
+     *
+     * @param colorName name of new color
+     */
+    final void setArenaBackground(final String colorName)
+    {
+        arena.setBackground(colorsMap.get(colorName));
+    }
+
+    /**
+     * sets color of arena text
+     *
+     * @param colorName name of new color
+     */
+    final void setArenaText(final String colorName)
+    {
+        arena.text = colorsMap.get(colorName);
+    }
+
+    /**
+     * sets picture of snakeBody's body
+     *
+     * @param name name of snakeBody's picture
+     */
+    final void setSnakeBody(final String name)
+    {
+        try
+        {
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/" + snakeMap.get(name));
+            arena.snakeBody = new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage();
+        } catch (Exception e)
+        {
+            e.printStackTrace(System.out);
+        }
+    }
+
+    /**
+     * sets picture of snakeBody's head
+     *
+     * @param name of snakeBody's picture
+     */
+    final void setSnakeHead(final String name)
+    {
+        try
+        {
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/" + snakeMap.get(name));
+            arena.snakeHead = new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage();
+        } catch (Exception e)
+        {
+            e.printStackTrace(System.out);
+        }
+    }
+
+    /**
+     * change, mute or unmute music
+     *
+     * @param name name of song or "mute" to mute music or "unmute" to unmute music
+     */
+    final void setMusic(@NotNull final String name)
+    {
+        if (name.equals("mute"))
+            controller.muteMusic();
+        else if (name.equals("unmute"))
+            controller.unMuteMusic();
+        else
+            controller.changeSong(name);
+    }
+
+    /**
+     * sets new fruit icon
+     *
+     * @param name name of file
+     */
+    final void setFruit(final String name)
+    {
+
+        try
+        {
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/" + fruitMap.get(name));
+            arena.fruit = new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage();
+        } catch (Exception e)
+        {
+            e.printStackTrace(System.out);
+        }
+    }
+
+    /**
+     * repaints arena view
+     */
+    final public void paint()
+    {
+        arena.repaint();
+    }
+
+    /**
+     * repaints score bar text
+     */
+    public final void paintScoreBar()
+    {
+        score.updateScore();
+    }
+
+    /**
+     * puts names of ready views to collection
+     */
+    private void initReadyViews()
+    {
+        readyView.put("dark", "");
+        readyView.put("light", "");
+        readyView.put("fruit fan", "");
+        readyView.put("girlish", "");
+    }
+
+    /**
+     * puts names of colors to collection
+     */
     private void initColorsMap()
     {
         colorsMap.put("black", new Color(0, 0, 0));
@@ -87,78 +287,116 @@ public class View
         colorsMap.put("gold", new Color(255, 215, 0));
     }
 
+    /**
+     * puts names of songs to collection
+     */
     private void initMusicMap()
     {
-        music.put("mute", "");
-        music.put("unmute", "");
-        music.put("Pirates of the Caribbean", ".wav");
-        music.put("Axel Foley - Original disco 80", ".wav");
+        musicMap.put("mute", "");
+        musicMap.put("unmute", "");
+        musicMap.put("Pirates of the Caribbean", ".wav");
+        musicMap.put("Axel Foley - Original disco 80", ".wav");
     }
 
-    private void initAppleMap()
+    /**
+     * puts names of fruits pictures to collection
+     */
+    private void initFruitMap()
     {
-        appleMap.put("apple logo", "apple0.png");
-        appleMap.put("red apple", "apple1.png");
-        appleMap.put("pineapple", "pineapple.png");
+        fruitMap.put("fruit logo", "apple0.png");
+        fruitMap.put("red fruit", "apple1.png");
+        fruitMap.put("pineapple", "pineapple.png");
     }
 
+    /**
+     * puts names of snakeBody body pictures to collection
+     */
     private void initSnakeParts()
     {
-        snakeParts.put("black dot", "snake0.png");
-        snakeParts.put("red dot", "snake1.png");
-        snakeParts.put("blue dot", "snake2.png");
-        snakeParts.put("yellow dot", "snake3.png");
-        snakeParts.put("yellow star", "snake4.png");
-        snakeParts.put("white dot", "snake5.png");
-        snakeParts.put("black star", "snake6.png");
-        snakeParts.put("white star", "snake7.png");
+        snakeMap.put("black dot", "snake0.png");
+        snakeMap.put("red dot", "snake1.png");
+        snakeMap.put("blue dot", "snake2.png");
+        snakeMap.put("yellow dot", "snake3.png");
+        snakeMap.put("yellow star", "snake4.png");
+        snakeMap.put("white dot", "snake5.png");
+        snakeMap.put("black star", "snake6.png");
+        snakeMap.put("white star", "snake7.png");
     }
 
-    void setReadyViews(String name)
+    /**
+     * changes all view settings to ready view
+     *
+     * @param name name of ready view
+     */
+    final void setReadyViews(@NotNull final String name)
     {
+        final class SetReadyViewsHelper
+        {
+            /**
+             * helps with setting view
+             *
+             * @param arenaBackground color of arena background
+             * @param arenaText       color of arena text
+             * @param scoreBackground color of score bar background
+             * @param scoreText       color of score bar text
+             * @param head            name of picture to become snakeBody's head
+             * @param body            name of picture to become snakeBody's body (without snakeBody's head)
+             * @param fruit           name od picture to become fruit
+             */
+            private SetReadyViewsHelper(final String arenaBackground, final String arenaText, final String scoreBackground, final String scoreText, final String head, final String body, final String fruit)
+            {
+                setArenaBackground(arenaBackground);
+                setArenaText(arenaText);
+                setScoreBarBackground(scoreBackground);
+                setScoreBarText(scoreText);
+                setSnakeHead(head);
+                setSnakeBody(body);
+                setFruit(fruit);
+            }
+        }
         switch (name)
         {
             default:
             case "dark":
             {
-                setReadyViewsHelper(
+                new SetReadyViewsHelper(
                         "black",
                         "red",
                         "crimson",
                         "white",
                         "yellow star",
                         "white star",
-                        "red apple");
+                        "red fruit");
                 break;
             }
             case "light":
             {
-                setReadyViewsHelper(
+                new SetReadyViewsHelper(
                         "white",
                         "blue",
                         "gold",
                         "coral",
                         "red dot",
                         "yellow dot",
-                        "red apple");
+                        "red fruit");
                 break;
 
             }
-            case "apple fan":
+            case "fruit fan":
             {
-                setReadyViewsHelper(
+                new SetReadyViewsHelper(
                         "gold",
                         "red",
                         "aqua",
                         "gold",
                         "black star",
                         "white star",
-                        "apple logo");
+                        "fruit logo");
                 break;
             }
             case "girlish":
             {
-                setReadyViewsHelper(
+                new SetReadyViewsHelper(
                         "deep pink",
                         "olive",
                         "coral",
@@ -171,83 +409,17 @@ public class View
         }
     }
 
-    private void setReadyViewsHelper(final String arenaBackground, final String arenaText, final String scoreBackground, final String scoreText, final String head, final String body, final String apple)
-    {
-        setArenaBackground(arenaBackground);
-        setArenaText(arenaText);
-        setScoreBarBackground(scoreBackground);
-        setScoreBarText(scoreText);
-        setSnakeHead(head);
-        setSnakeBody(body);
-        setApple(apple);
-    }
-
-    final void setScoreBarBackground(final String colorName)
-    {
-        score.setBackground(colorsMap.get(colorName));
-    }
-
-    final void setScoreBarText(final String colorName)
-    {
-        score.jLabel.setForeground(colorsMap.get(colorName));
-    }
-
-    final void setArenaBackground(final String colorName)
-    {
-        arena.setBackground(colorsMap.get(colorName));
-    }
-
-    final void setArenaText(final String colorName)
-    {
-        arena.text = colorsMap.get(colorName);
-    }
-
-    final void setSnakeBody(final String name)
-    {
-        arena.snake = new ImageIcon("src/pictures/" + snakeParts.get(name)).getImage();
-    }
-
-    void setSnakeHead(String name)
-    {
-        arena.snakeHead = new ImageIcon("src/pictures/" + snakeParts.get(name)).getImage();
-    }
-
-    void setMusic(String name)
-    {
-        if (name.equals("mute"))
-            controller.muteMusic();
-        else if (name.equals("unmute"))
-            controller.unMuteMusic();
-        else
-            controller.changeSong(name);
-    }
-
-    void setApple(String name)
-    {
-        arena.apple = new ImageIcon("src/pictures/" + appleMap.get(name)).getImage();
-    }
-
-    private void addPanel(int gridy, Component component)
-    {
-        final GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridy = gridy;
-        jPanel.add(component, gridBagConstraints);
-    }
-
-    public void paint()
-    {
-        arena.repaint();
-    }
-
-    public void paintScoreBar()
-    {
-        score.updateScore();
-    }
-
+    /**
+     * class performing keyboard input
+     */
     private class Keys extends KeyAdapter
     {
+        /**
+         * changes last pressed key to input key
+         * @param evt pressed key
+         */
         @Override
-        public void keyPressed(KeyEvent evt)
+        public void keyPressed(@NotNull final KeyEvent evt)
         {
             int keyCode = evt.getKeyCode();
             switch (keyCode)

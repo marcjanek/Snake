@@ -3,7 +3,6 @@ package model;
 import enums.Direction;
 import enums.Level;
 import enums.States;
-import model.history.Database;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +10,9 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Queue;
 
+/**
+ * class manages the data,logic and rules od application
+ */
 public final class Model
 {
     /**
@@ -24,18 +26,22 @@ public final class Model
     /**
      * hashSet which contains all free coordinates in arena
      */
+    @NotNull
     private final HashSet<Point> freePoints;
     /**
      * class representing snake body
      */
+    @NotNull
     private final Snake snake;
     /**
      * class performing operations on fruits collection
      */
+    @NotNull
     private final Fruits fruits;
     /**
      * //class accepts input and converts it to commands for the model or view
      */
+    @NotNull
     private final Database dataBase;
     /**
      * best score in ended games
@@ -52,6 +58,7 @@ public final class Model
     /**
      * direction in last move
      */
+    @NotNull
     public Direction lastDirection = Direction.RIGHT;
     /**
      * actual state of game
@@ -64,6 +71,7 @@ public final class Model
     /**
      * current level of game
      */
+    @NotNull
     private Level level = Level.MEDIUM;
 
     /**
@@ -80,7 +88,7 @@ public final class Model
     }
 
     /**
-     * method initializing collection with free coordinates
+     * initializing collection with free coordinates
      */
     private void initFreePoints()
     {
@@ -90,24 +98,25 @@ public final class Model
     }
 
     /**
-     * method returning best records from database
+     * returning best records from database
      *
      * @param number number of best records
      * @return records in output format
      */
+    @NotNull
     public final Queue<String> bestScores(final int number)
     {
         return dataBase.bestScores(number);
     }
 
     /**
-     * method return new head coordinates
+     * returns new head coordinates
      * @param direction direction in which snake's head move
      * @return new head coordinates
      */
     @NotNull
     @Contract("_ -> new")
-    private Point moveHead(final Direction direction)
+    private Point moveHead(@NotNull final Direction direction)
     {
         int x = snake.head().x;
         int y = snake.head().y;
@@ -130,7 +139,7 @@ public final class Model
      * method performing move of all snake and checking collecting fruits and collisions
      * @param direction direction in which snake's head move
      */
-    public final void moveSnake(final Direction direction)
+    public final void moveSnake(@NotNull final Direction direction)
     {
         final Point newHead = moveHead(direction);
         if (fruits.contains(newHead))
@@ -150,16 +159,17 @@ public final class Model
     }
 
     /**
-     * method returning list of fruits collection coordinates
+     * returns collection of fruits coordinates
      * @return fruits collection coordinates
      */
+    @NotNull
     public final Queue<Point> getFruits()
     {
         return fruits.get();
     }
 
     /**
-     * method change state to game over,changes if best score and adding game statistic to database
+     * change game state to game over and change best score if is higher then previous one and adds game statistic to database
      */
     private void gameOver()
     {
@@ -173,7 +183,7 @@ public final class Model
     }
 
     /**
-     * method check if head hit snake body or hit wall
+     * checks if snakes head hit snakes body or hit wall
      * @param newHead new head coordinates
      * @return true if hit, else false
      */
@@ -184,7 +194,7 @@ public final class Model
     }
 
     /**
-     * method return actual score
+     * returns actual score
      * @return actual score
      */
     public final int getScore()
@@ -193,10 +203,11 @@ public final class Model
     }
 
     /**
-     * method returning snake's body coordinates
+     * returns snake's body coordinates
      *
      * @return snake body list
      */
+    @NotNull
     public final Queue<Point> getSnake()
     {
         return snake.get();
@@ -207,7 +218,7 @@ public final class Model
      *
      * @param level new level of game
      */
-    private void setLevelSettings(final Level level)
+    private void setLevelSettings(@NotNull final Level level)
     {
         this.level = level;
         switch (level)
@@ -232,7 +243,7 @@ public final class Model
     }
 
     /**
-     * method restarting game on current level
+     * method restarts game on current level
      */
     public final void restart()
     {
@@ -240,11 +251,11 @@ public final class Model
     }
 
     /**
-     * method restarting game with settings in the parameters
+     * method restarts game with settings in the parameters
      *
      * @param level new level of game
      */
-    public final void restart(final Level level)
+    public final void restart(@NotNull final Level level)
     {
         setLevelSettings(level);
         initFreePoints();

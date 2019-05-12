@@ -12,11 +12,12 @@ import java.util.Random;
 /**
  * class performing operations on fruits collection
  */
-class Fruits
+final class Fruits
 {
     /**
      * generator random coordinates for new fruits
      */
+    @NotNull
     private final Random random = new Random();
     /**
      * hashSet which contains all free coordinates in arena
@@ -25,6 +26,7 @@ class Fruits
     /**
      * HashSet holding coordinates of fruits
      */
+    @NotNull
     private final HashSet<Point> fruits;
     /**
      * maximal number of fruits on arena
@@ -44,7 +46,7 @@ class Fruits
     }
 
     /**
-     * if area has place for new apple, new fruit will be added if is not equal to new head
+     * if area has place for new apple, new fruit will be added on free place different to new snake's head
      * @param newHead position of new head where is forbidden to place fruit
      */
     final void add(final Point newHead)
@@ -63,7 +65,7 @@ class Fruits
     }
 
     /**
-     * method adds fruit on random free position
+     * adds one fruit on random free position
      */
     private void add()
     {
@@ -73,7 +75,7 @@ class Fruits
     }
 
     /**
-     * method remove fruit from arena and adds removed position to free
+     * remove fruit from arena and adds removed position to free positions
      * @param point fruit coordinates to remove from collection
      */
     final void remove(final Point point)
@@ -83,7 +85,7 @@ class Fruits
     }
 
     /**
-     * method resets all class settings to construction settings
+     * resets all class settings to construction settings
      */
     final void reset()
     {
@@ -92,7 +94,7 @@ class Fruits
     }
 
     /**
-     * method adding new fruits
+     * adds new fruits
      * @param numberOfNewApples number of new apples to add
      */
     private void addFruit(final int numberOfNewApples)
@@ -102,7 +104,7 @@ class Fruits
     }
 
     /**
-     * method checks if point contains to fruit collection
+     * return true if point contains to fruit collection, otherwise false
      * @param point point to be checked if contains to fruit collection
      * @return true if fruit collection contains point, else false
      */
@@ -113,7 +115,7 @@ class Fruits
     }
 
     /**
-     * method returning list of fruits collection coordinates
+     * returning list of fruits collection coordinates
      * @return fruits collection coordinates
      */
     @NotNull

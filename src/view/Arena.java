@@ -5,31 +5,71 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 import java.util.Queue;
 
+import static java.util.Objects.requireNonNull;
+
+/**
+ * class representing arena
+ */
+@SuppressWarnings("JavaDoc")
 final class Arena extends JPanel
 {
+    /**
+     * reference to class Model
+     */
+    @NotNull
     private final Model model;
+    /**
+     * size of image
+     */
     private final int PROPORTION;
+    /**
+     * user interface picture width
+     */
     private final int WIDTH;
+    /**
+     * user interface picture height
+     */
     private final int HEIGHT;
+    /**
+     * color of arena text
+     */
     Color text;
-
-    Image snake;
+    /**
+     * image of snake's body (without snake's head)
+     */
+    Image snakeBody;
+    /**
+     * image of snake's head
+     */
     Image snakeHead;
-    Image apple;
+    /**
+     * image of fruit
+     */
+    Image fruit;
 
-    Arena(final Model model, final int PROPORTION)
+    /**
+     * creates JPanel with size of arena
+     *
+     * @param model      reference to JMenu class
+     * @param PROPORTION size of picture
+     */
+    Arena(@NotNull final Model model, final int PROPORTION)
     {
         this.model = model;
         this.PROPORTION = PROPORTION;
         WIDTH = PROPORTION * model.WIDTH;
         HEIGHT = PROPORTION * model.HEIGHT;
-        setPreferredSize(new Dimension(PROPORTION * model.WIDTH, PROPORTION * model.HEIGHT));
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
     }
 
-    public final void paint(final Graphics graphics)
+    /**
+     * paints view depending of actual state
+     *
+     * @param graphics
+     */
+    public final void paint(@NotNull final Graphics graphics)
     {
         super.paint(graphics);
         Toolkit.getDefaultToolkit().sync();
@@ -52,7 +92,12 @@ final class Arena extends JPanel
         Toolkit.getDefaultToolkit().sync();
     }
 
-    private void drawBestScores(final Graphics graphics)
+    /**
+     * draws list of best scores
+     *
+     * @param graphics
+     */
+    private void drawBestScores(@NotNull final Graphics graphics)
     {
         graphics.setColor(text);
         final String bestScores = "Best scores:";
@@ -75,22 +120,32 @@ final class Arena extends JPanel
         }
     }
 
-    private void drawSnake(final Graphics graphics)
+    /**
+     * draws snake and fruits on arena
+     *
+     * @param graphics
+     */
+    private void drawSnake(@NotNull final Graphics graphics)
     {
         final Queue<Point> snakeBody = model.getSnake();
         Point head = snakeBody.poll();
-        graphics.drawImage(snakeHead, head.x * PROPORTION, head.y * PROPORTION, PROPORTION, PROPORTION, this);
+        graphics.drawImage(snakeHead, requireNonNull(head).x * PROPORTION, requireNonNull(head).y * PROPORTION, PROPORTION, PROPORTION, this);
         for (final Point body : snakeBody)
         {
-            graphics.drawImage(snake, body.x * PROPORTION, body.y * PROPORTION, PROPORTION, PROPORTION, this);
+            graphics.drawImage(this.snakeBody, body.x * PROPORTION, body.y * PROPORTION, PROPORTION, PROPORTION, this);
         }
         for (final Point fruit : model.getFruits())
         {
-            graphics.drawImage(apple, fruit.x * PROPORTION, fruit.y * PROPORTION, PROPORTION, PROPORTION, this);
+            graphics.drawImage(this.fruit, fruit.x * PROPORTION, fruit.y * PROPORTION, PROPORTION, PROPORTION, this);
         }
     }
 
-    private void drawPressEnter(final Graphics graphics)
+    /**
+     * draws press enter text
+     *
+     * @param graphics
+     */
+    private void drawPressEnter(@NotNull final Graphics graphics)
     {
         final String string = "Press ENTER to start game";
         graphics.setColor(text);
@@ -100,7 +155,12 @@ final class Arena extends JPanel
         graphics.drawString(string, x, y);
     }
 
-    private void drawGameOver(final Graphics graphics)
+    /**
+     * draws "game over" text and "Press ENTER to play again" text
+     *
+     * @param graphics
+     */
+    private void drawGameOver(@NotNull final Graphics graphics)
     {
         int x, y;
         final String gameOver = "GAME OVER";

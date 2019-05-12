@@ -3,33 +3,47 @@ package controller;
 import enums.Direction;
 import enums.States;
 import model.Model;
+import org.jetbrains.annotations.NotNull;
 import view.View;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import java.io.File;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * class controlling game states and performing actions during game states changes.
  */
 public final class Controller implements Runnable
 {
+    /**
+     * reference to class Model
+     */
+    @NotNull
     private final Model model;
+    /**
+     * reference to class View
+     */
+    @NotNull
     private final View view;
+    /**
+     * background song
+     */
     private Clip clip;
+    /**
+     * game over sound
+     */
     private Clip gameOver;
+    /**
+     * true if music is muted, otherwise false
+     */
     private boolean isMusicMuted = false;
 
     /**
-     * Class constructor
-     *
-     * @param model
-     * @param view
+     * @param model reference to class model
+     * @param view reference to class view
      */
-    public Controller(final Model model, final View view)
+    public Controller(@NotNull final Model model, @NotNull final View view)
     {
         this.model = model;
         this.view = view;
@@ -48,7 +62,7 @@ public final class Controller implements Runnable
     }
 
     /**
-     * method representing waiting for start of the game
+     * represents waiting for start of the game
      */
     private void ready()
     {
@@ -67,7 +81,7 @@ public final class Controller implements Runnable
     }
 
     /**
-     * method representing playing snake
+     * represents playing snake
      */
     private void play()
     {
@@ -100,7 +114,7 @@ public final class Controller implements Runnable
     }
 
     /**
-     * method representing game over state.
+     * represents game over state
      */
     private void gameOver()
     {
@@ -123,16 +137,20 @@ public final class Controller implements Runnable
     }
 
     /**
-     * If music is loaded and unmute, play game over sound
+     * If musicMap is loaded and unmute, play game over sound
      */
-    public final void gameOverMusic()
+    private void gameOverMusic()
     {
         if (!isMusicMuted)
         {
             try
             {
+                final String path = "songs/Super Mario Game Over.wav";
+                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path);
+                InputStream bufferedIn = new BufferedInputStream(Objects.requireNonNull(inputStream));
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
                 gameOver = AudioSystem.getClip();
-                gameOver.open(AudioSystem.getAudioInputStream(new File("src/songs/" + "Super Mario Game Over" + ".wav")));
+                gameOver.open(audioInputStream);
             } catch (Exception exc)
             {
                 exc.printStackTrace(System.out);
@@ -160,9 +178,9 @@ public final class Controller implements Runnable
     /**
      * method change direction if it is not equal to direction in last move and if it is not equal to opposite direction in last move
      *
-     * @param newDirection
+     * @param newDirection last pressed direction on keyboard
      */
-    private void changeDirection(final Direction newDirection)
+    private void changeDirection(@NotNull final Direction newDirection)
     {
         if (model.lastDirection != newDirection)
             switch (newDirection)
@@ -183,24 +201,28 @@ public final class Controller implements Runnable
     }
 
     /**
-     *  method playing random song from loaded
+     *  plays random song from loaded
      */
     private void initMusic()
     {
-        if (view.music.size() > 1)
+        if (view.musicMap.size() > 1)
         {
             final Random random=new Random();
             String songName;
             do
             {
-                songName = (String) view.music.keySet().toArray()[random.nextInt(view.music.size())];
+                songName = (String) view.musicMap.keySet().toArray()[random.nextInt(view.musicMap.size())];
             } while (songName.equals("mute") || songName.equals("unmute"));
 
             try
             {
                 if (clip.isOpen())
                     clip.close();
-                clip.open(AudioSystem.getAudioInputStream(new File("src/songs/" + songName + ".wav")));
+                final String path = "songs/" + songName + ".wav";
+                InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path);
+                InputStream bufferedIn = new BufferedInputStream(Objects.requireNonNull(inputStream));
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
+                clip.open(audioInputStream);
             } catch (Exception e)
             {
                 e.printStackTrace(System.out);
@@ -210,7 +232,7 @@ public final class Controller implements Runnable
     }
 
     /**
-     * start new song if playing game. If song is not loaded, does not play any music clip
+     * starts new song if playing game. If song is not loaded, does not play any musicMap clip
      *
      * @param name song name without file extension
      */
@@ -224,7 +246,12 @@ public final class Controller implements Runnable
                 clip.close();
             if (isMusicMuted)
                 isMusicMuted = false;
-            clip.open(AudioSystem.getAudioInputStream(new File("src/songs/" + name + ".wav")));
+
+            final String path = "songs/" + name + ".wav";
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path);
+            InputStream bufferedIn = new BufferedInputStream(Objects.requireNonNull(inputStream));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
+            clip.open(audioInputStream);
             if (model.actualState == States.PLAYING)
                 clip.start();
         } catch (Exception e)
@@ -234,7 +261,7 @@ public final class Controller implements Runnable
     }
 
     /**
-     * method stops music
+     * stops musicMap
      */
     public void muteMusic()
     {
@@ -246,7 +273,7 @@ public final class Controller implements Runnable
     }
 
     /**
-     * method starts music if game is played
+     * starts musicMap if game is played
      */
     public void unMuteMusic()
     {
