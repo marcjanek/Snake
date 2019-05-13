@@ -1,9 +1,11 @@
 package controller;
 
 import enums.Direction;
+import enums.Level;
 import enums.States;
 import model.Model;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view.View;
 
 import javax.sound.sampled.*;
@@ -24,12 +26,11 @@ public final class Controller implements Runnable
     /**
      * reference to class View
      */
-    @NotNull
-    private final View view;
+    private View view;
     /**
      * background song
      */
-    private Clip clip;
+    private volatile Clip clip;
     /**
      * game over sound
      */
@@ -37,27 +38,39 @@ public final class Controller implements Runnable
     /**
      * true if music is muted, otherwise false
      */
-    private boolean isMusicMuted = false;
+    private volatile boolean isMusicMuted = false;
+    /**
+     * signalizes desire of restarting the game
+     */
+    private volatile boolean restart = false;
+    /**
+     * new level of game difficult
+     */
+    @Nullable
+    private Level restartLevel;
 
     /**
      * @param model reference to class model
-     * @param view reference to class view
      */
-    public Controller(@NotNull final Model model, @NotNull final View view)
+    public Controller(@NotNull final Model model)
     {
         this.model = model;
-        this.view = view;
-        view.setController(this);
         model.restart();
-        new Thread(this).start();
         try
         {
+            gameOver = AudioSystem.getClip();
             clip = AudioSystem.getClip();
         } catch (Exception exc)
         {
             exc.printStackTrace(System.out);
         }
+    }
+
+    public final void start(@NotNull final View view)
+    {
+        this.view = view;
         initMusic();
+        new Thread(this).start();
         ready();
     }
 
@@ -68,6 +81,7 @@ public final class Controller implements Runnable
     {
         while (model.actualState != States.PLAYING)
         {
+            tryRestart();
             view.paint();
             try
             {
@@ -92,6 +106,7 @@ public final class Controller implements Runnable
         model.startTimeOfGame = prevTime = System.currentTimeMillis();
         while (model.actualState == States.PLAYING)
         {
+            tryRestart();
             changeDirection(view.direction);
             model.moveSnake(model.lastDirection);
             view.paint();
@@ -122,6 +137,7 @@ public final class Controller implements Runnable
             gameOverMusic();
         while (model.actualState != States.READY)
         {
+            tryRestart();
             try
             {
                 Thread.sleep(10);
@@ -156,6 +172,43 @@ public final class Controller implements Runnable
                 exc.printStackTrace(System.out);
             }
             gameOver.start();
+        }
+    }
+
+    /**
+     * sets flag to signalize desire of restarting of game
+     */
+    public final void setRestart()
+    {
+        restart = true;
+    }
+
+    /**
+     * sets flag to signalize desire of restarting of game
+     *
+     * @param level new level to restart the game
+     */
+    public final void setRestart(final Level level)
+    {
+        restart = true;
+        restartLevel = level;
+    }
+
+    /**
+     * checks if view signalized restarting game
+     */
+    private void tryRestart()
+    {
+        if (restart)
+        {
+            restart = false;
+            if (restartLevel == null)
+                model.restart();
+            else
+            {
+                model.restart(restartLevel);
+                restartLevel = null;
+            }
         }
     }
 
@@ -268,7 +321,7 @@ public final class Controller implements Runnable
         isMusicMuted = true;
         if (clip.isOpen() && model.actualState == States.PLAYING)
             clip.stop();
-        if (gameOver.isOpen() && model.actualState == States.GAME_OVER)
+        if (gameOver.isOpen() && (model.actualState == States.GAME_OVER))
             gameOver.stop();
     }
 

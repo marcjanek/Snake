@@ -1,7 +1,7 @@
 package view;
 
+import controller.Controller;
 import enums.Level;
-import model.Model;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -15,10 +15,6 @@ import java.util.Set;
 final class Menu extends JMenuBar
 {
     /**
-     * reference to class Model
-     */
-    private final Model model;
-    /**
      * reference to class View
      */
     private final View view;
@@ -27,18 +23,18 @@ final class Menu extends JMenuBar
      */
     private JMenu settings;
 
-    Menu(Model model, View view)
+    Menu(final View view, @NotNull final Controller controller)
     {
-        this.model = model;
         this.view = view;
-        newGame();
+
+        newGame(controller);
         settings();
     }
 
     /**
      * creates JMenu with possibility to change level od game
      */
-    private void newGame()
+    private void newGame(@NotNull final Controller controller)
     {
         final JMenu newGame = new JMenu("new game");
         final class GameListener implements ActionListener
@@ -47,7 +43,7 @@ final class Menu extends JMenuBar
             {
                 for (final Level level : Level.values())
                     if (level.name().toLowerCase().equals(actionEvent.getActionCommand()))
-                        model.restart(level);
+                        controller.setRestart(level);
             }
         }
         final GameListener gameListener = new GameListener();
@@ -97,7 +93,7 @@ final class Menu extends JMenuBar
         scoreBar();
         snake();
         SimpleMenu("fruit", new AppleListener(), view.fruitMap.keySet());
-        SimpleMenu("musicMap", new MusicListener(), view.musicMap.keySet());
+        SimpleMenu("sound", new MusicListener(), view.musicMap.keySet());
         add(settings);
     }
 

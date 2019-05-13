@@ -46,7 +46,7 @@ public final class Model
     /**
      * best score in ended games
      */
-    public int bestScore = 0;
+    public volatile int bestScore = 0;
     /**
      * time of start game
      */
@@ -63,7 +63,7 @@ public final class Model
     /**
      * actual state of game
      */
-    public States actualState;
+    public volatile States actualState;
     /**
      * boolean representing true if game ended with collision, else false
      */

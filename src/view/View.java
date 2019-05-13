@@ -69,27 +69,28 @@ public class View
     /**
      * reference to class controller
      */
-    private Controller controller;
+    @NotNull
+    private final Controller controller;
 
     /**
      * class constructor creates user interface
      *
      * @param model reference to class Model
      */
-    public View(@NotNull final Model model)
+    public View(@NotNull final Model model, @NotNull final Controller controller)
     {
+        this.model = model;
+        this.controller = controller;
         final int PROPORTION = 24;
         initColorsMap();
         initMusicMap();
         initFruitMap();
         initSnakeParts();
         initReadyViews();
-        this.model = model;
         score = new Score(model, PROPORTION);
         arena = new Arena(model, PROPORTION);
-        Menu menu = new Menu(model, this);
-
-        JFrame jFrame = new JFrame("Snake");
+        final Menu menu = new Menu(this, controller);
+        final JFrame jFrame = new JFrame("Snake");
         final JPanel jPanel = new JPanel();
         jFrame.add(menu);
         jFrame.setJMenuBar(menu);
@@ -122,16 +123,6 @@ public class View
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setVisible(true);
         jFrame.toFront();
-    }
-
-    /**
-     * sets new controller
-     *
-     * @param controller reference to controller
-     */
-    public void setController(final Controller controller)
-    {
-        this.controller = controller;
     }
 
     /**
@@ -172,6 +163,7 @@ public class View
     final void setArenaText(final String colorName)
     {
         arena.text = colorsMap.get(colorName);
+        arena.repaint();
     }
 
     /**
@@ -264,7 +256,7 @@ public class View
     {
         readyView.put("dark", "");
         readyView.put("light", "");
-        readyView.put("fruit fan", "");
+        readyView.put("apple fan", "");
         readyView.put("girlish", "");
     }
 
@@ -303,7 +295,7 @@ public class View
      */
     private void initFruitMap()
     {
-        fruitMap.put("fruit logo", "apple0.png");
+        fruitMap.put("apple logo", "apple0.png");
         fruitMap.put("red fruit", "apple1.png");
         fruitMap.put("pineapple", "pineapple.png");
     }
@@ -382,7 +374,7 @@ public class View
                 break;
 
             }
-            case "fruit fan":
+            case "apple fan":
             {
                 new SetReadyViewsHelper(
                         "gold",
@@ -391,7 +383,7 @@ public class View
                         "gold",
                         "black star",
                         "white star",
-                        "fruit logo");
+                        "apple logo");
                 break;
             }
             case "girlish":
@@ -456,7 +448,7 @@ public class View
                         model.actualState = States.PLAYING;
                     } else if (model.actualState == States.GAME_OVER)
                     {
-                        model.restart();
+                        controller.setRestart();
                     }
                 }
             }

@@ -10,6 +10,8 @@ final class Main
     public static void main(String[] args)
     {
         final Model model = new Model();
-        new Controller(model, new View(model));
+        final Controller controller = new Controller(model);
+        final View view = new View(model, controller);
+        controller.start(view);
     }
 }
