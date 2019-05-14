@@ -87,7 +87,7 @@ public class View
     {
         this.model = model;
         this.controller = controller;
-        final int PROPORTION = 24;
+        final int PROPORTION = 23;
         initColorsMap();
         initMusicMap();
         initFruitMap();
