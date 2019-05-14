@@ -18,6 +18,7 @@ final class Arena extends JPanel
     /**
      * reference to class Model
      */
+
     @NotNull
     private final Model model;
     /**

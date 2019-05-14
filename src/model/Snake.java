@@ -1,5 +1,6 @@
 package model;
 
+
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -23,6 +24,7 @@ final class Snake
     /**
      * Linked list holding coordinates of snake body where on the beginning is snake's head
      */
+
     @NotNull
     private final LinkedList<Point> snakeBody;
     /**
@@ -50,6 +52,7 @@ final class Snake
      *
      * @return snake body list
      */
+
     @NotNull
     final Queue<Point> get()
     {

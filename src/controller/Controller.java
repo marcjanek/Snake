@@ -66,7 +66,7 @@ public final class Controller implements Runnable
         }
     }
 
-    public final void start(@NotNull final View view)
+    public final void start( final View view)
     {
         this.view = view;
         initMusic();

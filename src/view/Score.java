@@ -16,11 +16,13 @@ final class Score extends JPanel
     /**
      * score bar JPanel
      */
+
     @NotNull
     final JLabel jLabel;
     /**
      * reference to class Model
      */
+
     @NotNull
     private final Model model;
     /**

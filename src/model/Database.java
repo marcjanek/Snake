@@ -1,5 +1,6 @@
 package model;
 
+
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
@@ -26,7 +27,10 @@ final class Database
      * used for executing statements like INSERT,CREATE and SELECT
      */
     private Statement statement;
-
+    /**
+     * used for checking connection
+     */
+    private Connection connection;
     /**
      * constructor try to connect with Oracle database and
      * if connection is successful, creates new table also performing cleaning data in this table
@@ -63,7 +67,7 @@ final class Database
                     "        END IF;\n" +
                     "END;";
             final String deleteData = "DELETE FROM " + TABLE_NAME + "\n";
-            final Connection connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
             statement.execute(createTable);
             statement.execute(deleteData);
@@ -87,6 +91,17 @@ final class Database
     final void add(final int score, final long gameDate, final long time, final String gameLevel)
     {
         if(!IS_CONNECTED)
+            return;
+        boolean reachable;
+        try
+        {
+            reachable= connection.isValid(1);
+        }
+        catch (SQLException e)
+        {
+            return;
+        }
+        if(!reachable)
             return;
         final String selectMaxID = "SELECT NVL(MAX(ID),0) max_id FROM " + TABLE_NAME;
         final String insert = "INSERT INTO " + TABLE_NAME + " VALUES ( ";
@@ -112,12 +127,24 @@ final class Database
      * @param number number of best records
      * @return records in output format
      */
+
     @NotNull
     final Queue<String> bestScores(int number)
     {
         final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         final Queue<String> queue = new LinkedList<>();
         if(!IS_CONNECTED)
+            return queue;
+        boolean reachable;
+        try
+        {
+            reachable= connection.isValid(1);
+        }
+        catch (SQLException e)
+        {
+            return queue;
+        }
+        if(!reachable)
             return queue;
         if(number<0)
             number=0;

@@ -1,6 +1,6 @@
 package model;
 
-import org.jetbrains.annotations.Contract;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -26,6 +26,7 @@ final class Fruits
     /**
      * HashSet holding coordinates of fruits
      */
+
     @NotNull
     private final HashSet<Point> fruits;
     /**
@@ -108,7 +109,6 @@ final class Fruits
      * @param point point to be checked if contains to fruit collection
      * @return true if fruit collection contains point, else false
      */
-    @Contract(pure = true)
     final boolean contains(final Point point)
     {
         return fruits.contains(point);
@@ -118,8 +118,8 @@ final class Fruits
      * returning list of fruits collection coordinates
      * @return fruits collection coordinates
      */
+
     @NotNull
-    @Contract(" -> new")
     final Queue<Point> get()
     {
         return new LinkedList<>(fruits);

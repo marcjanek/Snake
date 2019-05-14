@@ -3,7 +3,6 @@ package model;
 import enums.Direction;
 import enums.Level;
 import enums.States;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -26,21 +25,25 @@ public final class Model
     /**
      * hashSet which contains all free coordinates in arena
      */
+
     @NotNull
     private final HashSet<Point> freePoints;
     /**
      * class representing snake body
      */
+
     @NotNull
     private final Snake snake;
     /**
      * class performing operations on fruits collection
      */
+
     @NotNull
     private final Fruits fruits;
     /**
      * //class accepts input and converts it to commands for the model or view
      */
+
     @NotNull
     private final Database dataBase;
     /**
@@ -58,6 +61,7 @@ public final class Model
     /**
      * direction in last move
      */
+
     @NotNull
     public Direction lastDirection = Direction.RIGHT;
     /**
@@ -71,6 +75,7 @@ public final class Model
     /**
      * current level of game
      */
+
     @NotNull
     private Level level = Level.MEDIUM;
 
@@ -103,6 +108,7 @@ public final class Model
      * @param number number of best records
      * @return records in output format
      */
+
     @NotNull
     public final Queue<String> bestScores(final int number)
     {
@@ -114,8 +120,8 @@ public final class Model
      * @param direction direction in which snake's head move
      * @return new head coordinates
      */
+
     @NotNull
-    @Contract("_ -> new")
     private Point moveHead(@NotNull final Direction direction)
     {
         int x = snake.head().x;
@@ -162,6 +168,7 @@ public final class Model
      * returns collection of fruits coordinates
      * @return fruits collection coordinates
      */
+
     @NotNull
     public final Queue<Point> getFruits()
     {
@@ -207,6 +214,7 @@ public final class Model
      *
      * @return snake body list
      */
+
     @NotNull
     public final Queue<Point> getSnake()
     {

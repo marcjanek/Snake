@@ -6,6 +6,7 @@ import enums.States;
 import model.Model;
 import org.jetbrains.annotations.NotNull;
 
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -49,26 +50,31 @@ public class View
     /**
      * reference to class Score
      */
+
     @NotNull
     private final Score score;
     /**
      * reference to class Arena
      */
+
     @NotNull
     private final Arena arena;
     /**
      * reference to class Model
      */
+
     @NotNull
     private final Model model;
     /**
      * last pressed direction
      */
+
     @NotNull
     public Direction direction = Direction.RIGHT;
     /**
      * reference to class controller
      */
+
     @NotNull
     private final Controller controller;
 
