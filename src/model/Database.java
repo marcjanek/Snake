@@ -15,9 +15,9 @@ import java.util.Queue;
 final class Database
 {
     /**
-     * constant is true if connection with Oracle database was successful
+     * true if connection with Oracle database was successful, else false
      */
-    private final boolean IS_CONNECTED;
+    private final boolean isConnected;
     /**
      * constant having name of table in database
      */
@@ -77,7 +77,7 @@ final class Database
             e.printStackTrace(System.out);
             connect=false;
         }
-        IS_CONNECTED = connect;
+        isConnected = connect;
     }
 
     /**
@@ -90,7 +90,7 @@ final class Database
      */
     final void add(final int score, final long gameDate, final long time, final String gameLevel)
     {
-        if(!IS_CONNECTED)
+        if(!isConnected)
             return;
         boolean reachable;
         try
@@ -133,7 +133,7 @@ final class Database
     {
         final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         final Queue<String> queue = new LinkedList<>();
-        if(!IS_CONNECTED)
+        if(!isConnected)
             return queue;
         boolean reachable;
         try
