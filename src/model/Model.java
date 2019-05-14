@@ -178,7 +178,7 @@ public final class Model
     /**
      * change game state to game over and change best score if is higher then previous one and adds game statistic to database
      */
-    private void gameOver()
+    private synchronized void gameOver()
     {
         actualState = States.GAME_OVER;
         bestScore = Math.max(getScore(), bestScore);
