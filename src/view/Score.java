@@ -11,8 +11,7 @@ import java.util.Date;
 /**
  * class performing operations on score bar JPanel
  */
-final class Score extends JPanel
-{
+final class Score extends JPanel {
     /**
      * score bar JPanel
      */
@@ -37,8 +36,7 @@ final class Score extends JPanel
      * @param model      reference to class Model
      * @param PROPORTION size of image
      */
-    Score(@NotNull final Model model, final int PROPORTION)
-    {
+    Score(@NotNull final Model model, final int PROPORTION) {
         final int SCORE_HEIGHT = 3;
         this.model = model;
         setPreferredSize(new Dimension(PROPORTION * model.WIDTH, PROPORTION * SCORE_HEIGHT));
@@ -52,8 +50,7 @@ final class Score extends JPanel
     /**
      * updates score bar
      */
-    final void updateScore()
-    {
+    final void updateScore() {
         Toolkit.getDefaultToolkit().sync();
         jLabel.setText(
                 "score: " + model.getScore() +

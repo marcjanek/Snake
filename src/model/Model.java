@@ -12,8 +12,7 @@ import java.util.Queue;
 /**
  * class manages the data,logic and rules od application
  */
-public final class Model
-{
+public final class Model {
     /**
      * arena width
      */
@@ -82,8 +81,7 @@ public final class Model
     /**
      * constructor initialize classes: Snake, Fruits, Database
      */
-    public Model()
-    {
+    public Model() {
         dataBase = new Database();
         freePoints = new HashSet<>();
         initFreePoints();
@@ -95,8 +93,7 @@ public final class Model
     /**
      * initializing collection with free coordinates
      */
-    private void initFreePoints()
-    {
+    private void initFreePoints() {
         for (int i = 0; i < WIDTH; ++i)
             for (int j = 0; j < HEIGHT; ++j)
                 freePoints.add(new Point(i, j));
@@ -110,24 +107,22 @@ public final class Model
      */
 
     @NotNull
-    public final Queue<String> bestScores(final int number)
-    {
+    public final Queue<String> bestScores(final int number) {
         return dataBase.bestScores(number);
     }
 
     /**
      * returns new head coordinates
+     *
      * @param direction direction in which snake's head move
      * @return new head coordinates
      */
 
     @NotNull
-    private Point moveHead(@NotNull final Direction direction)
-    {
+    private Point moveHead(@NotNull final Direction direction) {
         int x = snake.head().x;
         int y = snake.head().y;
-        switch (direction)
-        {
+        switch (direction) {
             case DOWN:
                 return new Point(x, ++y);
             case LEFT:
@@ -143,22 +138,19 @@ public final class Model
 
     /**
      * method performing move of all snake and checking collecting fruits and collisions
+     *
      * @param direction direction in which snake's head move
      */
-    public final void moveSnake(@NotNull final Direction direction)
-    {
+    public final void moveSnake(@NotNull final Direction direction) {
         final Point newHead = moveHead(direction);
-        if (fruits.contains(newHead))
-        {
+        if (fruits.contains(newHead)) {
             fruits.remove(newHead);
             snake.add(newHead);
             fruits.add(newHead);
-        } else if (collision(newHead))
-        {
-            collision=true;
+        } else if (collision(newHead)) {
+            collision = true;
             gameOver();
-        } else
-        {
+        } else {
             snake.removeTail();
             snake.add(newHead);
         }
@@ -166,20 +158,19 @@ public final class Model
 
     /**
      * returns collection of fruits coordinates
+     *
      * @return fruits collection coordinates
      */
 
     @NotNull
-    public final Queue<Point> getFruits()
-    {
+    public final Queue<Point> getFruits() {
         return fruits.get();
     }
 
     /**
      * change game state to game over and change best score if is higher then previous one and adds game statistic to database
      */
-    private synchronized void gameOver()
-    {
+    private synchronized void gameOver() {
         actualState = States.GAME_OVER;
         bestScore = Math.max(getScore(), bestScore);
         final long currentTimeMillis = System.currentTimeMillis();
@@ -191,21 +182,21 @@ public final class Model
 
     /**
      * checks if snakes head hit snakes body or hit wall
+     *
      * @param newHead new head coordinates
      * @return true if hit, else false
      */
-    private boolean collision(final Point newHead)
-    {
+    private boolean collision(final Point newHead) {
         final Point head = snake.head();
         return snake.contains(newHead) || (head.x < 0 || head.x >= WIDTH || head.y < 0 || head.y >= HEIGHT);
     }
 
     /**
      * returns actual score
+     *
      * @return actual score
      */
-    public final int getScore()
-    {
+    public final int getScore() {
         return snake.size() - 1;
     }
 
@@ -216,8 +207,7 @@ public final class Model
      */
 
     @NotNull
-    public final Queue<Point> getSnake()
-    {
+    public final Queue<Point> getSnake() {
         return snake.get();
     }
 
@@ -226,11 +216,9 @@ public final class Model
      *
      * @param level new level of game
      */
-    private void setLevelSettings(@NotNull final Level level)
-    {
+    private void setLevelSettings(@NotNull final Level level) {
         this.level = level;
-        switch (level)
-        {
+        switch (level) {
             case NOOB:
                 speed = 500;
                 fruits.maxFruits = 50;
@@ -253,8 +241,7 @@ public final class Model
     /**
      * method restarts game on current level
      */
-    public final void restart()
-    {
+    public final void restart() {
         restart(level);
     }
 
@@ -263,8 +250,7 @@ public final class Model
      *
      * @param level new level of game
      */
-    public final void restart(@NotNull final Level level)
-    {
+    public final void restart(@NotNull final Level level) {
         setLevelSettings(level);
         initFreePoints();
         snake.reset();

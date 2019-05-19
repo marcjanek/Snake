@@ -3,8 +3,7 @@ package enums;
 /**
  * levels of difficulty
  */
-public enum Level
-{
+public enum Level {
     /**
      * easiest level of game settings
      */

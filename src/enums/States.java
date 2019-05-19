@@ -3,8 +3,7 @@ package enums;
 /**
  * allowed game states for arena
  */
-public enum States
-{
+public enum States {
     /**
      * snake moves on arena
      */

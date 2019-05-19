@@ -11,8 +11,7 @@ import java.util.Queue;
 /**
  * class representing snake body
  */
-final class Snake
-{
+final class Snake {
     /**
      * constraint holding start x-axis position
      */
@@ -34,12 +33,12 @@ final class Snake
 
     /**
      * initialize snake body list and puts snake's head on start coordinates
+     *
      * @param WIDTH      game arena width
      * @param HEIGHT     game arena height
      * @param freePoints reference to hashSet which contains all free coordinates in arena
      */
-    Snake(final int WIDTH, final int HEIGHT, final HashSet<Point> freePoints)
-    {
+    Snake(final int WIDTH, final int HEIGHT, final HashSet<Point> freePoints) {
         snakeBody = new LinkedList<>();
         this.freePoints = freePoints;
         START_X = WIDTH / 4;
@@ -54,8 +53,7 @@ final class Snake
      */
 
     @NotNull
-    final Queue<Point> get()
-    {
+    final Queue<Point> get() {
         return new LinkedList<>(snakeBody);
     }
 
@@ -64,16 +62,14 @@ final class Snake
      *
      * @return snake head coordinates
      */
-    final Point head()
-    {
+    final Point head() {
         return snakeBody.getFirst();
     }
 
     /**
      * resets all class settings to construction settings
      */
-    final void reset()
-    {
+    final void reset() {
         snakeBody.clear();
         add(new Point(START_X, START_Y));
     }
@@ -81,8 +77,7 @@ final class Snake
     /**
      * polls snake tail
      */
-    final void removeTail()
-    {
+    final void removeTail() {
         freePoints.add(snakeBody.pollLast());
     }
 
@@ -91,18 +86,17 @@ final class Snake
      *
      * @param point coordinates to be added to snake body
      */
-    final void add(final Point point)
-    {
+    final void add(final Point point) {
         freePoints.remove(point);
         snakeBody.addFirst(point);
     }
 
     /**
      * calculates size of snake
+     *
      * @return length of snake
      */
-    final int size()
-    {
+    final int size() {
         return snakeBody.size();
     }
 
@@ -112,8 +106,7 @@ final class Snake
      * @param point point to be checked if contains to snake body
      * @return true if snake body contains point, else false
      */
-    final boolean contains(final Point point)
-    {
+    final boolean contains(final Point point) {
         return snakeBody.contains(point);
     }
 }

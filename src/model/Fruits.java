@@ -12,8 +12,7 @@ import java.util.Random;
 /**
  * class performing operations on fruits collection
  */
-final class Fruits
-{
+final class Fruits {
     /**
      * generator random coordinates for new fruits
      */
@@ -39,8 +38,7 @@ final class Fruits
      *
      * @param freePoints reference to hashSet which contains all free coordinates in arena
      */
-    Fruits(final HashSet<Point> freePoints)
-    {
+    Fruits(final HashSet<Point> freePoints) {
         fruits = new HashSet<>();
         this.freePoints = freePoints;
         addFruit(maxFruits);
@@ -48,15 +46,13 @@ final class Fruits
 
     /**
      * if area has place for new apple, new fruit will be added on free place different to new snake's head
+     *
      * @param newHead position of new head where is forbidden to place fruit
      */
-    final void add(final Point newHead)
-    {
-        if (!freePoints.isEmpty())
-        {
+    final void add(final Point newHead) {
+        if (!freePoints.isEmpty()) {
             Point newFruit;
-            do
-            {
+            do {
                 newFruit = (Point) freePoints.toArray()[random.nextInt(freePoints.size())];
             } while (newFruit.equals(newHead));
             fruits.add(newFruit);
@@ -68,8 +64,7 @@ final class Fruits
     /**
      * adds one fruit on random free position
      */
-    private void add()
-    {
+    private void add() {
         final Point newFruit = (Point) freePoints.toArray()[random.nextInt(freePoints.size())];
         fruits.add(newFruit);
         freePoints.remove(newFruit);
@@ -77,10 +72,10 @@ final class Fruits
 
     /**
      * remove fruit from arena and adds removed position to free positions
+     *
      * @param point fruit coordinates to remove from collection
      */
-    final void remove(final Point point)
-    {
+    final void remove(final Point point) {
         freePoints.add(point);
         fruits.remove(point);
     }
@@ -88,40 +83,39 @@ final class Fruits
     /**
      * resets all class settings to construction settings
      */
-    final void reset()
-    {
+    final void reset() {
         fruits.clear();
         addFruit(maxFruits);
     }
 
     /**
      * adds new fruits
+     *
      * @param numberOfNewApples number of new apples to add
      */
-    private void addFruit(final int numberOfNewApples)
-    {
+    private void addFruit(final int numberOfNewApples) {
         for (int i = 0; i < numberOfNewApples; ++i)
             add();
     }
 
     /**
      * return true if point contains to fruit collection, otherwise false
+     *
      * @param point point to be checked if contains to fruit collection
      * @return true if fruit collection contains point, else false
      */
-    final boolean contains(final Point point)
-    {
+    final boolean contains(final Point point) {
         return fruits.contains(point);
     }
 
     /**
      * returning list of fruits collection coordinates
+     *
      * @return fruits collection coordinates
      */
 
     @NotNull
-    final Queue<Point> get()
-    {
+    final Queue<Point> get() {
         return new LinkedList<>(fruits);
     }
 }

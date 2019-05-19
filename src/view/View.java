@@ -20,8 +20,7 @@ import java.util.TreeMap;
 /**
  * user interface
  */
-public class View
-{
+public class View {
     /**
      * collection with names of loaded clips
      */
@@ -66,25 +65,24 @@ public class View
     @NotNull
     private final Model model;
     /**
-     * last pressed direction
-     */
-
-    @NotNull
-    public Direction direction = Direction.RIGHT;
-    /**
      * reference to class controller
      */
 
     @NotNull
     private final Controller controller;
+    /**
+     * last pressed direction
+     */
+
+    @NotNull
+    public Direction direction = Direction.RIGHT;
 
     /**
      * class constructor creates user interface
      *
      * @param model reference to class Model
      */
-    public View(@NotNull final Model model, @NotNull final Controller controller)
-    {
+    public View(@NotNull final Model model, @NotNull final Controller controller) {
         this.model = model;
         this.controller = controller;
         final int PROPORTION = 23;
@@ -103,10 +101,8 @@ public class View
         jFrame.addKeyListener(new Keys());
         jFrame.add(jPanel);
         jPanel.setLayout(new GridBagLayout());
-        final class AddPanel
-        {
-            private AddPanel(final int gridy, @NotNull final Component component)
-            {
+        final class AddPanel {
+            private AddPanel(final int gridy, @NotNull final Component component) {
                 final GridBagConstraints gridBagConstraints = new GridBagConstraints();
                 gridBagConstraints.gridy = gridy;
                 jPanel.add(component, gridBagConstraints);
@@ -115,12 +111,10 @@ public class View
         new AddPanel(0, score);
         new AddPanel(1, arena);
         setReadyViews("dark");
-        try
-        {
+        try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/snakeIcon.png");
             jFrame.setIconImage(new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage());
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
         jFrame.pack();
@@ -136,8 +130,7 @@ public class View
      *
      * @param colorName name of new color
      */
-    final void setScoreBarBackground(final String colorName)
-    {
+    final void setScoreBarBackground(final String colorName) {
         score.setBackground(colorsMap.get(colorName));
     }
 
@@ -146,8 +139,7 @@ public class View
      *
      * @param colorName name of new color
      */
-    final void setScoreBarText(final String colorName)
-    {
+    final void setScoreBarText(final String colorName) {
         score.jLabel.setForeground(colorsMap.get(colorName));
     }
 
@@ -156,8 +148,7 @@ public class View
      *
      * @param colorName name of new color
      */
-    final void setArenaBackground(final String colorName)
-    {
+    final void setArenaBackground(final String colorName) {
         arena.setBackground(colorsMap.get(colorName));
     }
 
@@ -166,8 +157,7 @@ public class View
      *
      * @param colorName name of new color
      */
-    final void setArenaText(final String colorName)
-    {
+    final void setArenaText(final String colorName) {
         arena.text = colorsMap.get(colorName);
         arena.repaint();
     }
@@ -177,14 +167,11 @@ public class View
      *
      * @param name name of snakeBody's picture
      */
-    final void setSnakeBody(final String name)
-    {
-        try
-        {
+    final void setSnakeBody(final String name) {
+        try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/" + snakeMap.get(name));
             arena.snakeBody = new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
     }
@@ -194,14 +181,11 @@ public class View
      *
      * @param name of snakeBody's picture
      */
-    final void setSnakeHead(final String name)
-    {
-        try
-        {
+    final void setSnakeHead(final String name) {
+        try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/" + snakeMap.get(name));
             arena.snakeHead = new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
     }
@@ -211,8 +195,7 @@ public class View
      *
      * @param name name of song or "mute" to mute music or "unmute" to unmute music
      */
-    final void setMusic(@NotNull final String name)
-    {
+    final void setMusic(@NotNull final String name) {
         if (name.equals("mute"))
             controller.muteMusic();
         else if (name.equals("unmute"))
@@ -226,15 +209,12 @@ public class View
      *
      * @param name name of file
      */
-    final void setFruit(final String name)
-    {
+    final void setFruit(final String name) {
 
-        try
-        {
+        try {
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("pictures/" + fruitMap.get(name));
             arena.fruit = new ImageIcon(ImageIO.read(Objects.requireNonNull(inputStream))).getImage();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
     }
@@ -242,35 +222,30 @@ public class View
     /**
      * repaints arena view
      */
-    final public void paint()
-    {
+    final public void paint() {
         arena.repaint();
     }
 
     /**
      * repaints score bar text
      */
-    public final void paintScoreBar()
-    {
+    public final void paintScoreBar() {
         score.updateScore();
     }
 
     /**
      * puts names of ready views to collection
      */
-    private void initReadyViews()
-    {
+    private void initReadyViews() {
         readyView.put("dark", "");
         readyView.put("light", "");
-        readyView.put("apple fan", "");
         readyView.put("girlish", "");
     }
 
     /**
      * puts names of colors to collection
      */
-    private void initColorsMap()
-    {
+    private void initColorsMap() {
         colorsMap.put("black", new Color(0, 0, 0));
         colorsMap.put("white", new Color(255, 255, 255));
         colorsMap.put("red", new Color(255, 0, 0));
@@ -288,8 +263,7 @@ public class View
     /**
      * puts names of songs to collection
      */
-    private void initMusicMap()
-    {
+    private void initMusicMap() {
         musicMap.put("mute", "");
         musicMap.put("unmute", "");
         musicMap.put("Pirates of the Caribbean", ".wav");
@@ -299,9 +273,7 @@ public class View
     /**
      * puts names of fruits pictures to collection
      */
-    private void initFruitMap()
-    {
-        fruitMap.put("apple logo", "apple0.png");
+    private void initFruitMap() {
         fruitMap.put("red fruit", "apple1.png");
         fruitMap.put("pineapple", "pineapple.png");
     }
@@ -309,8 +281,7 @@ public class View
     /**
      * puts names of snakeBody body pictures to collection
      */
-    private void initSnakeParts()
-    {
+    private void initSnakeParts() {
         snakeMap.put("black dot", "snake0.png");
         snakeMap.put("red dot", "snake1.png");
         snakeMap.put("blue dot", "snake2.png");
@@ -326,10 +297,8 @@ public class View
      *
      * @param name name of ready view
      */
-    final void setReadyViews(@NotNull final String name)
-    {
-        final class SetReadyViewsHelper
-        {
+    final void setReadyViews(@NotNull final String name) {
+        final class SetReadyViewsHelper {
             /**
              * helps with setting view
              *
@@ -341,8 +310,7 @@ public class View
              * @param body            name of picture to become snakeBody's body (without snakeBody's head)
              * @param fruit           name od picture to become fruit
              */
-            private SetReadyViewsHelper(final String arenaBackground, final String arenaText, final String scoreBackground, final String scoreText, final String head, final String body, final String fruit)
-            {
+            private SetReadyViewsHelper(final String arenaBackground, final String arenaText, final String scoreBackground, final String scoreText, final String head, final String body, final String fruit) {
                 setArenaBackground(arenaBackground);
                 setArenaText(arenaText);
                 setScoreBarBackground(scoreBackground);
@@ -352,11 +320,9 @@ public class View
                 setFruit(fruit);
             }
         }
-        switch (name)
-        {
+        switch (name) {
             default:
-            case "dark":
-            {
+            case "dark": {
                 new SetReadyViewsHelper(
                         "black",
                         "red",
@@ -367,8 +333,7 @@ public class View
                         "red fruit");
                 break;
             }
-            case "light":
-            {
+            case "light": {
                 new SetReadyViewsHelper(
                         "white",
                         "blue",
@@ -380,20 +345,7 @@ public class View
                 break;
 
             }
-            case "apple fan":
-            {
-                new SetReadyViewsHelper(
-                        "gold",
-                        "red",
-                        "aqua",
-                        "gold",
-                        "black star",
-                        "white star",
-                        "apple logo");
-                break;
-            }
-            case "girlish":
-            {
+            case "girlish": {
                 new SetReadyViewsHelper(
                         "deep pink",
                         "olive",
@@ -410,50 +362,41 @@ public class View
     /**
      * class performing keyboard input
      */
-    private class Keys extends KeyAdapter
-    {
+    private class Keys extends KeyAdapter {
         /**
          * changes last pressed key to input key
+         *
          * @param evt pressed key
          */
         @Override
-        public void keyPressed(@NotNull final KeyEvent evt)
-        {
+        public void keyPressed(@NotNull final KeyEvent evt) {
             int keyCode = evt.getKeyCode();
-            switch (keyCode)
-            {
+            switch (keyCode) {
                 case KeyEvent.VK_UP:
-                case KeyEvent.VK_W:
-                {
+                case KeyEvent.VK_W: {
                     direction = Direction.UP;
                     break;
                 }
                 case KeyEvent.VK_DOWN:
-                case KeyEvent.VK_S:
-                {
+                case KeyEvent.VK_S: {
                     direction = Direction.DOWN;
                     break;
                 }
                 case KeyEvent.VK_LEFT:
-                case KeyEvent.VK_A:
-                {
+                case KeyEvent.VK_A: {
                     direction = Direction.LEFT;
                     break;
                 }
                 case KeyEvent.VK_RIGHT:
-                case KeyEvent.VK_D:
-                {
+                case KeyEvent.VK_D: {
                     direction = Direction.RIGHT;
                     break;
                 }
-                case KeyEvent.VK_ENTER:
-                {
-                    if (model.actualState == States.READY)
-                    {
+                case KeyEvent.VK_ENTER: {
+                    if (model.actualState == States.READY) {
                         direction = Direction.RIGHT;
                         model.actualState = States.PLAYING;
-                    } else if (model.actualState == States.GAME_OVER)
-                    {
+                    } else if (model.actualState == States.GAME_OVER) {
                         controller.setRestart();
                     }
                 }

@@ -16,8 +16,7 @@ import java.util.*;
 /**
  * class controlling game states and performing actions during game states changes.
  */
-public final class Controller implements Runnable
-{
+public final class Controller implements Runnable {
     /**
      * reference to class Model
      */
@@ -52,22 +51,18 @@ public final class Controller implements Runnable
     /**
      * @param model reference to class model
      */
-    public Controller(@NotNull final Model model)
-    {
+    public Controller(@NotNull final Model model) {
         this.model = model;
         model.restart();
-        try
-        {
+        try {
             gameOver = AudioSystem.getClip();
             clip = AudioSystem.getClip();
-        } catch (Exception exc)
-        {
+        } catch (Exception exc) {
             exc.printStackTrace(System.out);
         }
     }
 
-    public final void start( final View view)
-    {
+    public final void start(final View view) {
         this.view = view;
         initMusic();
         new Thread(this).start();
@@ -77,17 +72,13 @@ public final class Controller implements Runnable
     /**
      * represents waiting for start of the game
      */
-    private void ready()
-    {
-        while (model.actualState != States.PLAYING)
-        {
+    private void ready() {
+        while (model.actualState != States.PLAYING) {
             tryRestart();
             view.paint();
-            try
-            {
+            try {
                 Thread.sleep(10);
-            } catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 System.exit(1);
             }
         }
@@ -97,28 +88,23 @@ public final class Controller implements Runnable
     /**
      * represents playing snake
      */
-    private void play()
-    {
+    private void play() {
         model.collision = false;
         long prevTime, sleepTime;
         if (!isMusicMuted && clip.isOpen())
             clip.start();
         model.startTimeOfGame = prevTime = System.currentTimeMillis();
-        while (model.actualState == States.PLAYING)
-        {
+        while (model.actualState == States.PLAYING) {
             tryRestart();
             changeDirection(view.direction);
             model.moveSnake(model.lastDirection);
             view.paint();
             sleepTime = model.speed - System.currentTimeMillis() + prevTime;
-            if (sleepTime > 0)
-            {
-                try
-                {
+            if (sleepTime > 0) {
+                try {
                     Thread.sleep((int) sleepTime);
                     prevTime = System.currentTimeMillis();
-                } catch (InterruptedException e)
-                {
+                } catch (InterruptedException e) {
                     e.printStackTrace(System.out);
                     System.exit(1);
                 }
@@ -131,18 +117,14 @@ public final class Controller implements Runnable
     /**
      * represents game over state
      */
-    private void gameOver()
-    {
+    private void gameOver() {
         if (model.collision)
             gameOverMusic();
-        while (model.actualState != States.READY)
-        {
+        while (model.actualState != States.READY) {
             tryRestart();
-            try
-            {
+            try {
                 Thread.sleep(10);
-            } catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 e.printStackTrace(System.out);
                 System.exit(1);
             }
@@ -155,20 +137,16 @@ public final class Controller implements Runnable
     /**
      * If musicMap is loaded and unmute, play game over sound
      */
-    private void gameOverMusic()
-    {
-        if (!isMusicMuted)
-        {
-            try
-            {
+    private void gameOverMusic() {
+        if (!isMusicMuted) {
+            try {
                 final String path = "songs/Super Mario Game Over.wav";
                 InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path);
                 InputStream bufferedIn = new BufferedInputStream(Objects.requireNonNull(inputStream));
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
                 gameOver = AudioSystem.getClip();
                 gameOver.open(audioInputStream);
-            } catch (Exception exc)
-            {
+            } catch (Exception exc) {
                 exc.printStackTrace(System.out);
             }
             gameOver.start();
@@ -178,8 +156,7 @@ public final class Controller implements Runnable
     /**
      * sets flag to signalize desire of restarting of game
      */
-    public final void setRestart()
-    {
+    public final void setRestart() {
         restart = true;
     }
 
@@ -188,8 +165,7 @@ public final class Controller implements Runnable
      *
      * @param level new level to restart the game
      */
-    public final void setRestart(final Level level)
-    {
+    public final void setRestart(final Level level) {
         restart = true;
         restartLevel = level;
     }
@@ -197,15 +173,12 @@ public final class Controller implements Runnable
     /**
      * checks if view signalized restarting game
      */
-    private void tryRestart()
-    {
-        if (restart)
-        {
+    private void tryRestart() {
+        if (restart) {
             restart = false;
             if (restartLevel == null)
                 model.restart();
-            else
-            {
+            else {
                 model.restart(restartLevel);
                 restartLevel = null;
             }
@@ -216,13 +189,10 @@ public final class Controller implements Runnable
      * additional thread for score bar repainting method
      */
     @Override
-    public final void run()
-    {
+    public final void run() {
         final Timer timer = new Timer();
-        timer.schedule(new TimerTask()
-        {
-            public void run()
-            {
+        timer.schedule(new TimerTask() {
+            public void run() {
                 view.paintScoreBar();
             }
         }, 0, 10);
@@ -233,11 +203,9 @@ public final class Controller implements Runnable
      *
      * @param newDirection last pressed direction on keyboard
      */
-    private void changeDirection(@NotNull final Direction newDirection)
-    {
+    private void changeDirection(@NotNull final Direction newDirection) {
         if (model.lastDirection != newDirection)
-            switch (newDirection)
-            {
+            switch (newDirection) {
                 case UP:
                     if (model.lastDirection != Direction.DOWN) model.lastDirection = newDirection;
                     break;
@@ -254,21 +222,17 @@ public final class Controller implements Runnable
     }
 
     /**
-     *  plays random song from loaded
+     * plays random song from loaded
      */
-    private void initMusic()
-    {
-        if (view.musicMap.size() > 1)
-        {
-            final Random random=new Random();
+    private void initMusic() {
+        if (view.musicMap.size() > 1) {
+            final Random random = new Random();
             String songName;
-            do
-            {
+            do {
                 songName = (String) view.musicMap.keySet().toArray()[random.nextInt(view.musicMap.size())];
             } while (songName.equals("mute") || songName.equals("unmute"));
 
-            try
-            {
+            try {
                 if (clip.isOpen())
                     clip.close();
                 final String path = "songs/" + songName + ".wav";
@@ -276,8 +240,7 @@ public final class Controller implements Runnable
                 InputStream bufferedIn = new BufferedInputStream(Objects.requireNonNull(inputStream));
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
                 clip.open(audioInputStream);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace(System.out);
             }
         } else
@@ -289,10 +252,8 @@ public final class Controller implements Runnable
      *
      * @param name song name without file extension
      */
-    public void changeSong(final String name)
-    {
-        try
-        {
+    public void changeSong(final String name) {
+        try {
             if (clip.isRunning())
                 clip.stop();
             if (clip.isOpen())
@@ -307,8 +268,7 @@ public final class Controller implements Runnable
             clip.open(audioInputStream);
             if (model.actualState == States.PLAYING)
                 clip.start();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
     }
@@ -316,8 +276,7 @@ public final class Controller implements Runnable
     /**
      * stops musicMap
      */
-    public void muteMusic()
-    {
+    public void muteMusic() {
         isMusicMuted = true;
         if (clip.isOpen() && model.actualState == States.PLAYING)
             clip.stop();
@@ -328,8 +287,7 @@ public final class Controller implements Runnable
     /**
      * starts musicMap if game is played
      */
-    public void unMuteMusic()
-    {
+    public void unMuteMusic() {
         isMusicMuted = false;
         if (model.actualState == States.PLAYING)
             clip.start();

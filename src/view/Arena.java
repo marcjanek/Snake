@@ -13,8 +13,7 @@ import static java.util.Objects.requireNonNull;
  * class representing arena
  */
 @SuppressWarnings("JavaDoc")
-final class Arena extends JPanel
-{
+final class Arena extends JPanel {
     /**
      * reference to class Model
      */
@@ -56,8 +55,7 @@ final class Arena extends JPanel
      * @param model      reference to JMenu class
      * @param PROPORTION size of picture
      */
-    Arena(@NotNull final Model model, final int PROPORTION)
-    {
+    Arena(@NotNull final Model model, final int PROPORTION) {
         this.model = model;
         this.PROPORTION = PROPORTION;
         WIDTH = PROPORTION * model.WIDTH;
@@ -70,14 +68,11 @@ final class Arena extends JPanel
      *
      * @param graphics
      */
-    public final void paint(@NotNull final Graphics graphics)
-    {
+    public final void paint(@NotNull final Graphics graphics) {
         super.paint(graphics);
         Toolkit.getDefaultToolkit().sync();
-        switch (model.actualState)
-        {
-            case PLAYING:
-            {
+        switch (model.actualState) {
+            case PLAYING: {
                 drawSnake(graphics);
                 break;
             }
@@ -98,8 +93,7 @@ final class Arena extends JPanel
      *
      * @param graphics
      */
-    private void drawBestScores(@NotNull final Graphics graphics)
-    {
+    private void drawBestScores(@NotNull final Graphics graphics) {
         graphics.setColor(text);
         final String bestScores = "Best scores:";
         graphics.setFont(new Font("TimesRoman", Font.PLAIN, 35));
@@ -112,8 +106,7 @@ final class Arena extends JPanel
         final Queue<String> scores = model.bestScores(MAX_SCORES);
         graphics.setFont(new Font("TimesRoman", Font.PLAIN, 25));
         int i = 0;
-        for (String s : scores)
-        {
+        for (String s : scores) {
             x = (WIDTH - graphics.getFontMetrics().stringWidth(s)) / 2;
             y = HEIGHT / 2 + i * graphics.getFontMetrics().getHeight() + bestScoreHeight;
             graphics.drawString(s, x, y);
@@ -126,17 +119,14 @@ final class Arena extends JPanel
      *
      * @param graphics
      */
-    private void drawSnake(@NotNull final Graphics graphics)
-    {
+    private void drawSnake(@NotNull final Graphics graphics) {
         final Queue<Point> snakeBody = model.getSnake();
         Point head = snakeBody.poll();
         graphics.drawImage(snakeHead, requireNonNull(head).x * PROPORTION, requireNonNull(head).y * PROPORTION, PROPORTION, PROPORTION, this);
-        for (final Point body : snakeBody)
-        {
+        for (final Point body : snakeBody) {
             graphics.drawImage(this.snakeBody, body.x * PROPORTION, body.y * PROPORTION, PROPORTION, PROPORTION, this);
         }
-        for (final Point fruit : model.getFruits())
-        {
+        for (final Point fruit : model.getFruits()) {
             graphics.drawImage(this.fruit, fruit.x * PROPORTION, fruit.y * PROPORTION, PROPORTION, PROPORTION, this);
         }
     }
@@ -146,8 +136,7 @@ final class Arena extends JPanel
      *
      * @param graphics
      */
-    private void drawPressEnter(@NotNull final Graphics graphics)
-    {
+    private void drawPressEnter(@NotNull final Graphics graphics) {
         final String string = "Press ENTER to start game";
         graphics.setColor(text);
         graphics.setFont(new Font("TimesRoman", Font.PLAIN, 40));
@@ -161,8 +150,7 @@ final class Arena extends JPanel
      *
      * @param graphics
      */
-    private void drawGameOver(@NotNull final Graphics graphics)
-    {
+    private void drawGameOver(@NotNull final Graphics graphics) {
         int x, y;
         final String gameOver = "GAME OVER";
         graphics.setColor(text);

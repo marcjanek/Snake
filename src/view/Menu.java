@@ -12,8 +12,7 @@ import java.util.Set;
 /**
  * class representing menu bar
  */
-final class Menu extends JMenuBar
-{
+final class Menu extends JMenuBar {
     /**
      * reference to class View
      */
@@ -23,8 +22,7 @@ final class Menu extends JMenuBar
      */
     private JMenu settings;
 
-    Menu(final View view, @NotNull final Controller controller)
-    {
+    Menu(final View view, @NotNull final Controller controller) {
         this.view = view;
 
         newGame(controller);
@@ -34,23 +32,18 @@ final class Menu extends JMenuBar
     /**
      * creates JMenu with possibility to change level od game
      */
-    private void newGame(@NotNull final Controller controller)
-    {
+    private void newGame(@NotNull final Controller controller) {
         final JMenu newGame = new JMenu("new game");
-        final class GameListener implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+        final class GameListener implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 for (final Level level : Level.values())
                     if (level.name().toLowerCase().equals(actionEvent.getActionCommand()))
                         controller.setRestart(level);
             }
         }
         final GameListener gameListener = new GameListener();
-        final class Helper
-        {
-            private Helper(@NotNull final String name)
-            {
+        final class Helper {
+            private Helper(@NotNull final String name) {
                 final JMenuItem jMenuItem = new JMenuItem(name.toLowerCase());
                 jMenuItem.addActionListener(gameListener);
                 newGame.add(jMenuItem);
@@ -64,26 +57,19 @@ final class Menu extends JMenuBar
     /**
      * creates JMenu with settings to change user interface
      */
-    private void settings()
-    {
-        final class MusicListener implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+    private void settings() {
+        final class MusicListener implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setMusic(actionEvent.getActionCommand());
             }
         }
-        final class AppleListener implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+        final class AppleListener implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setFruit(actionEvent.getActionCommand());
             }
         }
-        final class ReadyViewsListener implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+        final class ReadyViewsListener implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setReadyViews(actionEvent.getActionCommand());
             }
         }
@@ -100,19 +86,14 @@ final class Menu extends JMenuBar
     /**
      * creates JMenu with arena settings
      */
-    private void arena()
-    {
-        final class ArenaBackground implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+    private void arena() {
+        final class ArenaBackground implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setArenaBackground(actionEvent.getActionCommand());
             }
         }
-        final class ArenaText implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+        final class ArenaText implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setArenaText(actionEvent.getActionCommand());
             }
         }
@@ -124,19 +105,14 @@ final class Menu extends JMenuBar
     /**
      * creates JMenu with score bar settings
      */
-    private void scoreBar()
-    {
-        final class ScoreBarBackground implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+    private void scoreBar() {
+        final class ScoreBarBackground implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setScoreBarBackground(actionEvent.getActionCommand());
             }
         }
-        final class ScoreBarText implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+        final class ScoreBarText implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setScoreBarText(actionEvent.getActionCommand());
             }
         }
@@ -148,19 +124,14 @@ final class Menu extends JMenuBar
     /**
      * creates JMenu with snake settings
      */
-    private void snake()
-    {
-        final class BodySnakeListener implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+    private void snake() {
+        final class BodySnakeListener implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setSnakeBody(actionEvent.getActionCommand());
             }
         }
-        final class HeadSnakeListener implements ActionListener
-        {
-            public void actionPerformed(@NotNull final ActionEvent actionEvent)
-            {
+        final class HeadSnakeListener implements ActionListener {
+            public void actionPerformed(@NotNull final ActionEvent actionEvent) {
                 view.setSnakeHead(actionEvent.getActionCommand());
             }
         }
@@ -176,8 +147,7 @@ final class Menu extends JMenuBar
      * @param actionListener actionListener to new JMenu
      * @param keySet         set with names of JMenuItems
      */
-    private void SimpleMenu(final String name, final ActionListener actionListener, @NotNull final Set<String> keySet)
-    {
+    private void SimpleMenu(final String name, final ActionListener actionListener, @NotNull final Set<String> keySet) {
         final JMenu jMenu = new JMenu(name);
         new JMenuCreator(actionListener, jMenu, keySet);
         settings.add(jMenu);
@@ -186,8 +156,7 @@ final class Menu extends JMenuBar
     /**
      * class creating two JMenus
      */
-    private final class DoubleMenu extends JMenu
-    {
+    private final class DoubleMenu extends JMenu {
         private final JMenu parent;
         private final Set<String> keySet;
 
@@ -201,8 +170,7 @@ final class Menu extends JMenuBar
          * @param parent          JMenu parent
          * @param keySet          set with names of JMenuItems
          */
-        DoubleMenu(final ActionListener actionListener, final String name, final ActionListener actionListener1, final String name1, final JMenu parent, final Set<String> keySet)
-        {
+        DoubleMenu(final ActionListener actionListener, final String name, final ActionListener actionListener1, final String name1, final JMenu parent, final Set<String> keySet) {
             this.parent = parent;
             this.keySet = keySet;
             create(name, actionListener);
@@ -215,8 +183,7 @@ final class Menu extends JMenuBar
          * @param name           name of new JMenu
          * @param actionListener ActionListener to new JMenu
          */
-        private void create(final String name, final ActionListener actionListener)
-        {
+        private void create(final String name, final ActionListener actionListener) {
             final JMenu jMenu = new JMenu(name);
             new JMenuCreator(actionListener, jMenu, keySet);
             parent.add(jMenu);
@@ -226,8 +193,7 @@ final class Menu extends JMenuBar
     /**
      * creates JMenuItems with set names
      */
-    private final class JMenuCreator extends JMenuItem
-    {
+    private final class JMenuCreator extends JMenuItem {
         /**
          * creates JMenuItems with set names
          *
@@ -235,10 +201,8 @@ final class Menu extends JMenuBar
          * @param parent         parent to which connect new JMenuItems
          * @param keys           key set with names of new JMenuItems
          */
-        private JMenuCreator(final ActionListener actionListener, @NotNull final JMenu parent, @NotNull final Set<String> keys)
-        {
-            for (final String key : keys)
-            {
+        private JMenuCreator(final ActionListener actionListener, @NotNull final JMenu parent, @NotNull final Set<String> keys) {
+            for (final String key : keys) {
                 final JMenuItem jMenuItem = new JMenuItem(key);
                 jMenuItem.addActionListener(actionListener);
                 parent.add(jMenuItem);
